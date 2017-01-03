@@ -9,6 +9,8 @@
 using namespace std;
 
 int main(int argc, char**argv) {
+    int bytes;
+    int sent_bytes;
     MainFlow *mainFlow = new MainFlow();
     const int server_port = atoi(argv[1]);
 
@@ -33,20 +35,26 @@ int main(int argc, char**argv) {
     unsigned int from_len = sizeof(struct sockaddr_in);
 
     char buffer[4096];
-
+    char *data= "yay! :)";
     while (mainFlow->doUserRequest() != 7) {
-        int bytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *) &from, &from_len);
+        bytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *) &from, &from_len);
         if (bytes < 0) {
             perror("error reading from socket");
         }
 
         cout << "The client sent: " << buffer << endl;
 
-        int sent_bytes = sendto(sock, buffer, bytes, 0, (struct sockaddr *) &from, sizeof(from));
+        sent_bytes = sendto(sock, data, sizeof(data), 0, (struct sockaddr *) &from, sizeof(from));
         if (sent_bytes < 0) {
             perror("error writing to socket");
         }
-        buffer[0]='a';
+
+    }
+    //send closing message to client.
+    data = "close";
+    sent_bytes = sendto(sock, data, sizeof(data), 0, (struct sockaddr *) &from, sizeof(from));
+    if (sent_bytes < 0) {
+        perror("error writing to socket");
     }
     close(sock);
 
