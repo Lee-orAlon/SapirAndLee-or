@@ -166,10 +166,12 @@ public:
      */
     int numberOfTrip();
 
+/*TODO i've changed this function*/
     /**
      * connectDriverToTrip- give driver a trip according to its location.
+     * @param currentTime
      */
-    void connectDriverToTrip();
+    void connectDriverToTrip(int currentTime);
 };
 
 #endif //EX2_TEXICENTER_H

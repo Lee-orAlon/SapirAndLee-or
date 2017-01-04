@@ -1,7 +1,8 @@
 #include <iostream>
 #include "Trip.h"
 
-Trip::Trip(Value *start, Value *end, std::list<Passenger *> *passengers, double tariff) {
+/*TODO i've changed this function*/
+Trip::Trip(Value *start, Value *end, std::list<Passenger *> *passengers, double tariff, int time) {
     this->start = start;
     this->end = end;
     this->passengers = passengers;
@@ -11,9 +12,12 @@ Trip::Trip(Value *start, Value *end, std::list<Passenger *> *passengers, double 
     else
         this->numOfPassengers = 0;
     this->metersPass = -1;
+    this->startTime = time;
+    this->hasDriver = false;
 }
 
-Trip::Trip(int id, Value *start, Value *end, int numberOfPassengers, double tariff) {
+/*TODO i've changed this function*/
+Trip::Trip(int id, Value *start, Value *end, int numberOfPassengers, double tariff, int time) {
     this->start = start;
     this->end = end;
     this->passengers = new std::list<Passenger *>;
@@ -22,6 +26,8 @@ Trip::Trip(int id, Value *start, Value *end, int numberOfPassengers, double tari
     this->metersPass = -1;
     this->numOfPassengers = numberOfPassengers;
     this->number = id;
+    this->startTime = time;
+    this->hasDriver = false;
 }
 
 Value *Trip::getStart() {
@@ -82,4 +88,17 @@ Trip::~Trip() {
     delete (this->start);
     delete (this->end);
     delete (this->passengers);
+}
+
+/*TODO i've added this function*/
+int Trip::getStartTime() {
+    return  this->startTime;
+}
+/*TODO i've added this function*/
+bool Trip::doesTripHasDriver() {
+    return this->hasDriver;
+}
+/*TODO i've added this function*/
+void Trip::setTripHasDriverToBeTrue() {
+    this->hasDriver = true;
 }

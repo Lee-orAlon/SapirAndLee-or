@@ -26,7 +26,8 @@ private:
     int numOfPassengers;
     std::list<Passenger*> *passengers;
     double tariff;
-    //Trip::Trip(int id, Value *start, Value *end, int numberOfPassengers, double tariff) {
+    int startTime;
+    bool hasDriver;
     friend class boost::serialization::access;
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
@@ -38,17 +39,21 @@ private:
         ar &tariff;
         ar &passengers;
         ar&metersPass;
+        ar&startTime;
+        ar &hasDriver;
 
     }
 public:
+    /*TODO I'va changed this function */
     /**
      * constructor.
      * @param start start location.
      * @param end end location.
      * @param passengers passengers that are in this trip.
      * @param tariff the tariff of this Trip.
+     * @param time the start time of
      */
-    Trip(Value* start, Value* end, std::list<Passenger*> *passengers, double tariff);
+    Trip(Value* start, Value* end, std::list<Passenger*> *passengers, double tariff, int time);
     /**
      * Defualt constructor.
      * @return
@@ -95,6 +100,14 @@ public:
     /*
      * constractor recive number of passenger instead of passenger
      */
-    Trip(int id, Value* start, Value *end, int numberOfPassengers, double tariff);
+    Trip(int id, Value* start, Value *end, int numberOfPassengers, double tariff, int time);
+
+    /*TODO I've added this function*/
+    int getStartTime();
+
+    /*TODO I've added this function*/
+bool doesTripHasDriver();
+    /*TODO I've added this function*/
+    void setTripHasDriverToBeTrue();
 };
 #endif //EX2_ADVANCEDPROGRAMMING1_TRIP_H

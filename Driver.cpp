@@ -115,11 +115,11 @@ void Driver::setInTrip(bool drive) {
 Driver::~Driver() {
     delete(this->location);
     //  this->taxi = NULL;
-   // delete(this->taxi);
+    // delete(this->taxi);
     // this->path = NULL;
-  //  delete(this->path);
-  //  this->drive = NULL;
-  //  delete(this->drive);
+    //  delete(this->path);
+    //  this->drive = NULL;
+    //  delete(this->drive);
 }
 
 Driver::Driver(int id, int age, char status, int exp, int cabID) {
@@ -156,10 +156,10 @@ int Driver::getDriverCabID() {
 
 /**TODO*/
 void Driver::connectToTaxiCenter() {
-   // int s=socket()
+    // int s=socket()
 }
 //Driver(int id, int age, char status, int exp, int cabID);
- std::ostream& operator<< (std::ostream &os, const Driver &p){
+std::ostream& operator<< (std::ostream &os, const Driver &p){
     os << '(' <<p.id<< ',' <<p.age << ',' <<p.status <<',' <<p.experience <<',' <<p.taxiID <<',' <<p.location->getiValue(1)<<',' << p.taxi->getID()<<')';
     return os;
 }

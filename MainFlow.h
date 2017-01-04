@@ -4,6 +4,7 @@
 #include "Grid.h"
 #include "Driver.h"
 #include "TaxiCenter.h"
+#include "Clock.h"
 
 /*
  * MainFlow class- this class creates a Taxi Center and manage it.
@@ -21,7 +22,25 @@ public:
      */
     ~MainFlow();
 
+    /*TODO- I've changed this function signature and did this function public (it was private before the changing)*/
+    Driver *createDriver(char * driver);
+
+    /*TODO- I've added this function- it returns the number of task.*/
+    int  doUserRequest();
+    /*TODO i've added this function*/
+    int getCounter();
+    /*TODO i've added this function*/
+    int getNumberOfDrivers();
 private:
+    int task;
+    /*TODO i've added this member*/
+    int counter; //Count the number of times that the user wanted to do task 1.
+    /*TODO i've added this member*/
+    int numberOfDrivers;
+    /*TODO i've added this member*/
+    bool addDrivers;
+    /*TODO i've added this member*/
+    Clock clock;
     TaxiCenter *taxiCenter;
     Map *map;
 
@@ -31,11 +50,7 @@ private:
      */
     Map *createMap();
 
-    /**
-     * createDriver.
-     * @return a new Driver (according to the user's input).
-     */
-    Driver *createDriver();
+
 
     Passenger *createPassenger();
 
@@ -55,6 +70,8 @@ private:
      * printDriverLocation- print a driver's location (by the driver's ID).
      */
     void printDriverLocation();
+
+
 };
 
 #endif //EX3_MAINFLOW_H

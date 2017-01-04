@@ -53,15 +53,20 @@ void TaxiCenter::createTrip(Trip *t) {
     this->trip->push_back(t);
 }
 
-void TaxiCenter::connectDriverToTrip() {
+/*TODO i've changed this function*/
+void TaxiCenter::connectDriverToTrip(int currntTime) {
     std::list<Trip *>::iterator it = this->trip->begin();
     for (std::list<Trip *>::iterator it = this->trip->begin();
          it != this->trip->end(); it++) {
-        Driver *d = this->findClosestDriver((*it)->getStart());
-        if (d != NULL) {
-            std::list<Element *> *pathD = this->bfs->pathDrive((*it)->getStart(), (*it)->getEnd());
-            pathD->remove(*pathD->begin());
-            d->setTrip((*it), pathD);
+        if(((*it)->getStartTime() == currntTime)&&((*it)->doesTripHasDriver()== false)) {
+            Driver *d = this->findClosestDriver((*it)->getStart());
+            if (d != NULL) {
+                std::list<Element *> *pathD = this->bfs->pathDrive((*it)->getStart(),
+                                                                   (*it)->getEnd());
+                pathD->remove(*pathD->begin());
+                d->setTrip((*it), pathD);
+                (*it)->setTripHasDriverToBeTrue();
+            }
         }
     }
 }

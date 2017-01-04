@@ -6,9 +6,12 @@
 MainFlow::MainFlow() {
     this->map = createMap();
     this->taxiCenter = new TaxiCenter(map->getGrid(), new BFS(map));
-    int task;
-    cin >> task;
-    while (task != 7) {
+    this->counter=0;
+    this->numberOfDrivers = 0;
+    this->addDrivers = false;
+    this->clock = Clock();
+   /* cin >> this->task;
+    while (this->task != 7) {
         cin.ignore();
         switch (task) {
             case 1:
@@ -32,7 +35,7 @@ MainFlow::MainFlow() {
             }
         }
         cin >> task;
-    }
+    }*/
 }
 
 Map *MainFlow::createMap() {
@@ -64,8 +67,8 @@ Map *MainFlow::createMap() {
     return m;
 }
 
-Driver *MainFlow::createDriver() {
-    int id;
+Driver *MainFlow::createDriver(char *driver) {
+   /* int id;
     int age;
     char status;
     int experience;
@@ -83,6 +86,8 @@ Driver *MainFlow::createDriver() {
     cin >> cabID;
     cin.ignore();
     return new Driver(id, age, status, experience, cabID);
+    */
+
 }
 
 Cab *MainFlow::createCab() {
@@ -119,6 +124,7 @@ Trip *MainFlow::createTrip() {
     int yEnd;
     int numOfPassengers;
     double tariff;
+    int time;
     char dummy;
 
     cin >> id;
@@ -134,8 +140,9 @@ Trip *MainFlow::createTrip() {
     cin >> numOfPassengers;
     cin >> dummy;
     cin >> tariff;
+    cin >> time;
     cin.ignore();
-    return new Trip(id, new Point(xStart, yStart), new Point(xEnd, yEnd), numOfPassengers, tariff);
+    return new Trip(id, new Point(xStart, yStart), new Point(xEnd, yEnd), numOfPassengers, tariff,time);
 }
 
 void MainFlow::printDriverLocation() {
@@ -148,4 +155,61 @@ void MainFlow::printDriverLocation() {
 MainFlow::~MainFlow() {
     delete (this->taxiCenter);
     delete (this->map);
+}
+
+/*TODO*/
+int MainFlow::getCounter() {
+    return  this->counter;
+}
+/*TODO*/
+int MainFlow::getNumberOfDrivers() {
+    return this->numberOfDrivers;
+}
+
+/*TODO*/
+int MainFlow::doUserRequest() {
+    cin >> task;
+    cin.ignore();
+    switch (task) {
+        case 1:
+          //  this->taxiCenter->addDriver(createDriver());
+            cin >> this->numberOfDrivers;
+            cin.ignore();
+            this->counter++;
+            break;
+        case 2: {
+            this->taxiCenter->createTrip(createTrip());
+            break;
+        }
+        case 3:
+            this->taxiCenter->addCab(createCab());
+            break;
+        case 4:
+            printDriverLocation();
+            break;
+      /*  case 6: {
+            this->taxiCenter->connectDriverToTaxi();
+            this->taxiCenter->connectDriverToTrip();
+            this->taxiCenter->moveAllDrivers();
+            break;
+        }*/
+        case 8: { /*TODO delete this case*/
+            std::cout<<"try8"<<std::endl;
+            break;
+        }
+        case 9: { /*TODO change the condition in if statement*/
+            if(!this->addDrivers){
+                this->taxiCenter->connectDriverToTaxi();
+                this->addDrivers = true;
+            } else {
+                this->taxiCenter->connectDriverToTrip(this->clock.getTime());
+                this->taxiCenter->moveOneStep();
+            }
+            this->clock.increaseTimeByOne();
+            break;
+
+        }
+    }
+
+    return this->task;
 }
