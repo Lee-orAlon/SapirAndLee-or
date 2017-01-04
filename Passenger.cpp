@@ -1,6 +1,6 @@
 #include "Passenger.h"
 
-Passenger::Passenger(Value *sorce, Value *destination) {
+Passenger::Passenger(Point *sorce, Point *destination) {
     this->source = sorce;
     this->destination = destination;
     this->rate = 0;

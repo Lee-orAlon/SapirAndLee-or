@@ -1,9 +1,6 @@
 #include <iostream>
 #include "Driver.h"
 #include "Point.h"
-#include <sys/socket.h>
-
-
 Driver::Driver(int id, int age, char status, Cab *cab, Value *currentLocation, int experience) {
     this->id = id;
     this->age = age;
@@ -146,7 +143,9 @@ Driver::Driver(int id, int age, char status, int exp, int cabID) {
     this->taxi= NULL;
     this->path= NULL;
 }
+Driver::Driver(){
 
+}
 void Driver::addCabToDriver(Cab *cab) {
     this->taxi = cab;
 }
@@ -159,3 +158,21 @@ int Driver::getDriverCabID() {
 void Driver::connectToTaxiCenter() {
    // int s=socket()
 }
+//Driver(int id, int age, char status, int exp, int cabID);
+ std::ostream& operator<< (std::ostream &os, const Driver &p){
+    os << '(' <<p.id<< ',' <<p.age << ',' <<p.status <<',' <<p.experience <<',' <<p.taxiID <<',' <<p.location->getiValue(1)<<',' << p.taxi->getID()<<')';
+    return os;
+}
+
+
+
+/**td::ostream& operator<< (std::ostream &os,Driver &driver) {
+    os  << driver.id << driver.age << driver.status << driver.experience<<driver.average
+            <<driver.taxiID;
+    return os;
+}*/
+/*std::istream& operator >>(std::istream &input, Driver &driver) {
+    input>>driver.id>>driver.age>>driver.status>>driver.experience>>driver.average
+    >>driver.taxiID;
+    return input;
+}*/

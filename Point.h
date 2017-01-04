@@ -1,8 +1,24 @@
 #ifndef EX2_POINT_H
 #define EX2_POINT_H
-
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/tokenizer.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/assign/list_of.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/iostreams/stream.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/serialization/base_object.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/base_object.hpp>
+#include <boost/serialization/export.hpp>
 #include "Value.h"
-
 /**
  * Point class- represents a point (x,y) in 2D world. This class extends the 'Value' class.
  */
@@ -10,6 +26,15 @@ class Point : public Value {
 private:
     int x;
     int y;
+    friend class boost::serialization::access;
+
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+        ar & x;
+        ar & y;
+        ar& boost::serialization::base_object<Value>(*this);
+    }
 public:
     /**
      * Constructor.
@@ -17,6 +42,7 @@ public:
      * @param yValue - the value of the point in y axis.
      */
     Point(int xValue, int yValue);
+    Point();
 
     /**
      * getX.

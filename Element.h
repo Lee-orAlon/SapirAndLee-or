@@ -3,11 +3,27 @@
 
 
 #include "Value.h"
-
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/tokenizer.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/assign/list_of.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/iostreams/stream.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include "Value.h"
 /**
  * Element class- this class represents a location of an Element in a Grid.
  */
 class Element {
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+    }
 public:
     /**
      * setLeftNeighbor.
@@ -124,5 +140,5 @@ public:
 
     virtual bool hasFatherDirection()=0;
 };
-
+BOOST_SERIALIZATION_ASSUME_ABSTRACT(Element)
 #endif //ASS1_ELEMENT_H

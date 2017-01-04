@@ -9,7 +9,9 @@ Point::Point(int xValue, int yValue) {
 int Point::getX() {
     return this->x;
 }
+Point::Point(){
 
+}
 int Point::getY() {
     return this->y;
 }
@@ -39,3 +41,4 @@ bool Point::operator!=(const Point &other) const {
 
 Point::~Point() {
 }
+BOOST_CLASS_EXPORT( Point);

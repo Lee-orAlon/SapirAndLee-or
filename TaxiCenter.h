@@ -23,6 +23,14 @@ private:
     BFS *bfs;
 
     void setRateOfDriver(Driver *driver, std::list<Passenger *> *listPassenger);
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+        ar & grid;
+        ar & bfs;
+    }
+//Driver::Driver(int id, int age, char status, Cab *cab, Value *currentLocation, int experience)
 
 public:
 /**

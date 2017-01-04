@@ -6,9 +6,29 @@
 #include "Cab.h"
 #include "Value.h"
 #include "Element.h"
+#include <sys/socket.h>
+#include <iostream>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/tokenizer.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/assign/list_of.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/iostreams/stream.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/serialization/list.hpp>
+/*
 /**
  * Driver class- a class of a single driver.
  */
+
+using namespace boost::archive;
 class Driver {
 private:
     int numberOfRate;
@@ -36,14 +56,30 @@ private:
      * @param drive 'true' if the driver is in trip. Else, 'false'.
      */
     void setInTrip(bool drive);
-
     /**
      * isThereNextStep.
      * @return 'true' if the next step is not 'NULL'. Else, returns 'false'.
      */
     bool isThereNextStep();
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+        ar & id;
+        ar & age;
+        ar& status;
+        ar &experience;
+        ar &taxiID;
+        ar &numberOfRate;
+        ar &rate;
+        ar &inTrip;
+        ar &location;
+        ar &taxi;
+        //ar &path;
+    }
 
 public:
+    friend std::ostream& operator<< (std::ostream &os, const Driver &p);
     /**
      * constructor.
      * @param id the ID of this Driver.
@@ -54,7 +90,7 @@ public:
      */
     /*TODO I'echanged this constructor (char insteadof int)*/
     Driver(int id, int age, char status, Cab *cab, Value* currentLocation,int experience);
-
+    Driver();
     /**
      * Destructor.
      */
