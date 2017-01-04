@@ -75,7 +75,7 @@ private:
         ar &inTrip;
         ar &location;
         ar &taxi;
-        //ar &path;
+        ar &path;
     }
 
 public:
