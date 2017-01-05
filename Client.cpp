@@ -51,7 +51,7 @@ int main(int argc, char**argv) {
             if(buffer[0]=='2'){
                 udp->reciveData(buffer, sizeof(buffer));
                 std::list<Element*> *path = desirializePath(buffer, buffer+4095);
-                driver->enterPath(path);
+                driver->enterPath(buffer, buffer+4095);
             }
 //            if(udp.reciveData(buffer,4096)!=-1) {
             //  if (buffer == "trip") {

@@ -61,7 +61,6 @@ std::list<Element*>*TaxiCenter::findPath(Driver* d){
 
 /*TODO i've changed this function*/
 Trip* TaxiCenter::connectDriverToTrip(int currntTime) {
-
     std::list<Trip *>::iterator it = this->trip->begin();
     for (std::list<Trip *>::iterator it = this->trip->begin();
          it != this->trip->end(); it++) {
@@ -86,6 +85,10 @@ string TaxiCenter::serializePath(int currentTime) {
     Trip *trip = this->connectDriverToTrip(currentTime);
     if(trip!=NULL) {
         std::list<Element*> *path = this->createPath(trip->getStart(), trip->getEnd());
+        for (std::list<Element *>::iterator it = path->begin();
+             it != path->end(); it++) {
+            (*it)->getMyLocation()->printValue();
+        }
         std::string serial_str;
         boost::iostreams::back_insert_device<std::string> inserter(serial_str);
         boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
@@ -96,7 +99,6 @@ string TaxiCenter::serializePath(int currentTime) {
     }
     return  "NULL";
 }
-
 std::list<Trip *> *TaxiCenter::listOfTrip() {
     return this->trip;
 }

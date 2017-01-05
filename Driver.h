@@ -132,7 +132,7 @@ public:
      */
     void setTrip(Trip *givenTrip);
     void enterTrip(string t);
-    void enterPath(string t);
+    void enterPath(char *path, char *end);
 
 
     /**

@@ -57,14 +57,13 @@ void Driver::enterTrip(string t){
 }
 
 
-void Driver::enterPath(string t){
-    /* std::list<Element*>*listE;
-     boost::iostreams::basic_array_source<char> device(t.c_str(), t.size());
-     boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
-     boost::archive::binary_iarchive ia(s2);
-     ia >>listE;
-     this->path=listE;*/
-
+void Driver::enterPath(char *path, char *end) {
+    std::list<Element*> *listElm;
+    boost::iostreams::basic_array_source<char> device(path, end);
+    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
+    boost::archive::binary_iarchive ia(s2);
+    ia >>listElm;
+    this->path=listElm;
 }
 
 void Driver::setTrip(Trip *givenTrip) {
@@ -152,7 +151,7 @@ Driver::Driver(int id, int age, char status, int exp, int cabID) {
         this->status = W;
     }
     this->experience = exp;
-    this->location = new Point(1,1);
+    this->location = new Point(0,0);
     this->taxiID = cabID;
     this->taxi= NULL;
     this->path= NULL;
