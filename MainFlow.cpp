@@ -1,10 +1,11 @@
 #include "MainFlow.h"
 #include "Regular.h"
 #include "Luxury.h"
-#include "Udp.h"
+
 #include <list>
 
-int main(int argc, char**argv){
+/*int main(int argc, char**argv){
+    MainFlow mainFlow(argv);
     Udp udp = Udp(true,atoi(argv[1]));
     MainFlow mainFlow();
     char* buffer;
@@ -16,13 +17,34 @@ int main(int argc, char**argv){
     while (udp.sendData("close")!=CORRECT){}
 
     delete (udp);
-}
 
-MainFlow::MainFlow() {
+}*/
+
+MainFlow::MainFlow(int port) {
     this->map = createMap();
     this->taxiCenter = new TaxiCenter(map->getGrid(), new BFS(map));
     this->addDrivers = false;
     this->clock = Clock();
+    this->udp = new Udp(true,port);
+   // this->udp->initialize();
+   // char* buffer;
+   /* int work;
+    do{
+        work = this->udp->reciveData(buffer, 4096);
+    } while(work ==-1);
+    cout << "The server sent: " << buffer << endl;
+    */
+   // this->udp = Udp(true,atoi(argv[1]));
+
+   // char* buffer;
+
+    while (this->doUserRequest()!=7){
+
+    }
+
+    while (udp->sendData("close")!=CORRECT){}
+
+    delete (udp);
 
    /* cin >> this->task;
     while (this->task != 7) {
@@ -176,10 +198,21 @@ int MainFlow::doUserRequest() {
     cin >> this->task;
     cin.ignore();
     switch (this->task) {
-        case 1:
-          //  this->taxiCenter->addDriver(createDriver());
+        case 1: {
+            int numOfDrivers;
+            cin>>numOfDrivers;
+            //  this->taxiCenter->addDriver(createDriver());
+            this->udp->initialize();
+            char buffer[4096];
+            this->udp->reciveData(buffer, sizeof(buffer));
+            string dataTaxi = this->taxiCenter->connectDriverToTaxi(buffer);
+            cout << "The client sent: " << buffer << endl;
+            this->udp->sendData("cab");
+            if(!this->udp->sendData(dataTaxi)){
+
+            }
             break;
-        case 2: {
+        } case 2: {
             this->taxiCenter->createTrip(createTrip());
             break;
         }
@@ -197,18 +230,30 @@ int MainFlow::doUserRequest() {
         }*/
         case 8: { /*TODO delete this case*/
             std::cout<<"try8"<<std::endl;
-
+            string s = "hey";
+            int y = this->udp->sendData(s);
             break;
         }
         case 9: { /*TODO change the condition in if statement*/
-            if(!this->addDrivers){
-                this->taxiCenter->connectDriverToTaxi();
-                this->addDrivers = true;
-            } else {
-                this->taxiCenter->connectDriverToTrip(this->clock.getTime());
-                this->taxiCenter->moveOneStep();
-            }
+           // if(!this->addDrivers){
+               // this->taxiCenter->connectDriverToTaxi();
+            //    this->addDrivers = true;
+          //  } else {
+              //  this->taxiCenter->connectDriverToTrip(this->clock.getTime());
+
             this->clock.increaseTimeByOne();
+            string path;
+            do{
+                path = this->taxiCenter->serializePath(this->clock.getTime());
+                if(path!=NULL) {
+                    this->udp->sendData("path");
+                    this->udp->sendData(path);
+                }
+            } while(path!=NULL);
+
+            this->taxiCenter->moveOneStep(this->clock.getTime());
+          //  }
+
             break;
 
         }

@@ -46,23 +46,37 @@ bool Driver::isInTrip() {
 Trip *Driver::getCurrentTrip() {
     return this->drive;
 }
-
-void Driver::setTrip(Trip *givenTrip, std::list<Element *> *givenPath) {
-    if (givenPath != NULL) {
-        this->drive = givenTrip;
-        this->path = givenPath;
-        this->setInTrip(true);
-    }
+void Driver::enterTrip(string t){
+    Trip* trip;
+    boost::iostreams::basic_array_source<char> device(t.c_str(), t.size());
+    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
+    boost::archive::binary_iarchive ia(s2);
+    ia >>trip;
+    this->drive=trip;
+    this->setInTrip(true);
 }
 
+
+void Driver::enterPath(string t){
+    std::list<Element*>*listE;
+    boost::iostreams::basic_array_source<char> device(t.c_str(), t.size());
+    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
+    boost::archive::binary_iarchive ia(s2);
+    ia >>listE;
+    this->path=listE;
+
+}
+
+void Driver::setTrip(Trip *givenTrip) {
+        this->drive = givenTrip;
+        this->setInTrip(true);
+}
 Cab *Driver::getCab() {
     return this->taxi;
 }
-
 std::list<Element *> *Driver::getPath() {
     return this->path;
 }
-
 Value *Driver::getLocation() {
     return this->location;
 }
@@ -146,10 +160,14 @@ Driver::Driver(int id, int age, char status, int exp, int cabID) {
 Driver::Driver(){
 
 }
-void Driver::addCabToDriver(Cab *cab) {
-    this->taxi = cab;
+void Driver::addCabToDriver( string cab) {
+    Cab *cabO;
+    boost::iostreams::basic_array_source<char> device(cab.c_str(), cab.size());
+    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
+    boost::archive::binary_iarchive ia(s2);
+    ia >>cabO;
+    this->taxi = cabO;
 }
-
 int Driver::getDriverCabID() {
     return this->taxiID;
 }
@@ -164,6 +182,12 @@ std::ostream& operator<< (std::ostream &os, const Driver &p){
     return os;
 }
 
+bool Driver::operator==(const Driver &other) const {
+    //std::list<Passenger *>::iterator it = this->passengers->begin();
+    if(this->id==other.id)
+        return true;
+    return false;
+}
 
 
 /**td::ostream& operator<< (std::ostream &os,Driver &driver) {

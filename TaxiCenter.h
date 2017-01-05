@@ -8,6 +8,20 @@
 #include "BFS.h"
 #include "Value.h"
 #include <queue>
+#include <string>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/tokenizer.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/assign/list_of.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/iostreams/stream.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/serialization/base_object.hpp>
+#include <boost/serialization/base_object.hpp>
 
 using namespace std;
 
@@ -121,7 +135,7 @@ public:
      * addDriver.
      * @param driver the Driver which the user wants to add to this Taxi Center.
      */
-    void addDriver(Driver *driver);
+    void addDriver(Driver* driver);
 
     /**
      * addCab.
@@ -152,13 +166,13 @@ public:
     /*
      * this function give to all driver taxi acoording to driver id
      */
-    void connectDriverToTaxi();
+    string connectDriverToTaxi(string driver);
 
     /*
      * moveOneStep- move all the drivers that are in trip one step (according to type of the
      * driver's cab).
      */
-    void moveOneStep();
+    void moveOneStep(int currentTime);
 
     /**
      * numberOfTrip.
@@ -171,7 +185,11 @@ public:
      * connectDriverToTrip- give driver a trip according to its location.
      * @param currentTime
      */
-    void connectDriverToTrip(int currentTime);
+    Trip* connectDriverToTrip(int currentTime);
+
+    string serializePath(int currentTime);
+
+    std::list<Element*>*findPath(Driver* d);
 };
 
 #endif //EX2_TEXICENTER_H

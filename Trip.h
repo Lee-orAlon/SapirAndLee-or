@@ -106,7 +106,7 @@ public:
     int getStartTime();
 
     /*TODO I've added this function*/
-bool doesTripHasDriver();
+    bool doesTripHasDriver();
     /*TODO I've added this function*/
     void setTripHasDriverToBeTrue();
 };

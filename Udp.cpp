@@ -39,7 +39,7 @@ Udp::Udp(bool isServers, int port_num) {
 ***********************************************************************/
 Udp::~Udp() {
 	// TODO Auto-generated destructor stub
-	delete (this->socketDescriptor);
+//	delete (this->socketDescriptor);
 }
 
 /***********************************************************************

@@ -27,7 +27,7 @@
 /**
  * Driver class- a class of a single driver.
  */
-
+using namespace std;
 using namespace boost::archive;
 class Driver {
 private:
@@ -129,9 +129,11 @@ public:
     /**
      * setTrip- set this Driver's trip.
      * @param givenTrip the Trip of this Driver.
-     * @param givenPath the path which this driver should drive.
      */
-    void setTrip(Trip *givenTrip, std::list<Element *> *givenPath);
+    void setTrip(Trip *givenTrip);
+    void enterTrip(string t);
+    void enterPath(string t);
+
 
     /**
      * getCab.
@@ -157,7 +159,7 @@ public:
     * @param  return
             * add the cab to the drive
     */
-    void addCabToDriver(Cab *cab);
+    void addCabToDriver(string cab);
     /**
     * getDriverCabID
     * @param source
@@ -192,6 +194,7 @@ public:
 
     /**TODO*/
     void connectToTaxiCenter();
+    bool operator==(const Driver &other)const;
 };
 
 #endif //EX2_ADVANCEDPROGRAMMING1_DRIVER_H

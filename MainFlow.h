@@ -5,6 +5,7 @@
 #include "Driver.h"
 #include "TaxiCenter.h"
 #include "Clock.h"
+#include "Udp.h"
 
 /*
  * MainFlow class- this class creates a Taxi Center and manage it.
@@ -15,7 +16,7 @@ public:
     /**
      * Constructor.
      */
-    MainFlow();
+    MainFlow(int port);
 
     /**
      * Destructor.
@@ -29,6 +30,7 @@ public:
     int  doUserRequest();
 private:
     int task;
+    Udp *udp;
     /*TODO I've removed the member counter and the member numberOfDrivers*/
     /*TODO i've added this member*/
     bool addDrivers;
