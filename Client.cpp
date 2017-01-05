@@ -39,14 +39,16 @@ int main(int argc, char**argv) {
         //  }
 
         string closeSocket = "close";
+        string recievePath = "path";
         bool socketOpen = true;
 
         while (socketOpen) {
             udp->sendData("send me data");
             udp->reciveData(buffer, sizeof(buffer));
             cout << "The server sent: " << buffer << endl;
-            if(buffer == "path"){
+            if(recievePath.compare(buffer)){
                 udp->reciveData(buffer, sizeof(buffer));
+                std::list<Element*> *path = desirializePath(buffer, buffer+4095);
                 driver->enterPath(buffer);
             }
 //            if(udp.reciveData(buffer,4096)!=-1) {
