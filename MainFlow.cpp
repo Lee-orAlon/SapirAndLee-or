@@ -205,9 +205,9 @@ int MainFlow::doUserRequest() {
             this->udp->initialize();
             char buffer[4096];
             this->udp->reciveData(buffer, sizeof(buffer));
-            string dataTaxi = this->taxiCenter->connectDriverToTaxi(buffer);
+            string dataTaxi = this->taxiCenter->connectDriverToTaxi(buffer, buffer+4095);
             cout << "The client sent: " << buffer << endl;
-            this->udp->sendData("cab");
+           // this->udp->sendData("cab");
             if(!this->udp->sendData(dataTaxi)){
 
             }
@@ -229,6 +229,8 @@ int MainFlow::doUserRequest() {
             break;
         }*/
         case 8: { /*TODO delete this case*/
+            char buffer[4096];
+            this->udp->reciveData(buffer, sizeof(buffer));
             std::cout<<"try8"<<std::endl;
             string s = "hey";
             int y = this->udp->sendData(s);
@@ -240,16 +242,17 @@ int MainFlow::doUserRequest() {
             //    this->addDrivers = true;
           //  } else {
               //  this->taxiCenter->connectDriverToTrip(this->clock.getTime());
-
+            char buffer[4096];
+            this->udp->reciveData(buffer, sizeof(buffer));
             this->clock.increaseTimeByOne();
             string path;
             do{
                 path = this->taxiCenter->serializePath(this->clock.getTime());
-                if(path!=NULL) {
+                if(!path.compare("NULL")) {
                     this->udp->sendData("path");
                     this->udp->sendData(path);
                 }
-            } while(path!=NULL);
+            } while(!path.compare("NULL"));
 
             this->taxiCenter->moveOneStep(this->clock.getTime());
           //  }

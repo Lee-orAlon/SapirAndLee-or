@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Point.h"
-
+#include <boost/serialization/export.hpp>
 Point::Point(int xValue, int yValue) {
     this->x = xValue;
     this->y = yValue;

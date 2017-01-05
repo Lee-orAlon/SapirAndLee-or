@@ -47,29 +47,29 @@ Trip *Driver::getCurrentTrip() {
     return this->drive;
 }
 void Driver::enterTrip(string t){
-    Trip* trip;
-    boost::iostreams::basic_array_source<char> device(t.c_str(), t.size());
-    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
-    boost::archive::binary_iarchive ia(s2);
-    ia >>trip;
-    this->drive=trip;
-    this->setInTrip(true);
+    /*  Trip* trip;
+      boost::iostreams::basic_array_source<char> device(t.c_str(), t.size());
+      boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
+      boost::archive::binary_iarchive ia(s2);
+      ia >>trip;
+      this->drive=trip;
+      this->setInTrip(true);*/
 }
 
 
 void Driver::enterPath(string t){
-    std::list<Element*>*listE;
-    boost::iostreams::basic_array_source<char> device(t.c_str(), t.size());
-    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
-    boost::archive::binary_iarchive ia(s2);
-    ia >>listE;
-    this->path=listE;
+    /* std::list<Element*>*listE;
+     boost::iostreams::basic_array_source<char> device(t.c_str(), t.size());
+     boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
+     boost::archive::binary_iarchive ia(s2);
+     ia >>listE;
+     this->path=listE;*/
 
 }
 
 void Driver::setTrip(Trip *givenTrip) {
-        this->drive = givenTrip;
-        this->setInTrip(true);
+    this->drive = givenTrip;
+    this->setInTrip(true);
 }
 Cab *Driver::getCab() {
     return this->taxi;
@@ -152,7 +152,7 @@ Driver::Driver(int id, int age, char status, int exp, int cabID) {
         this->status = W;
     }
     this->experience = exp;
-    this->location = new Point(0,0);
+    this->location = new Point(1,1);
     this->taxiID = cabID;
     this->taxi= NULL;
     this->path= NULL;
@@ -161,11 +161,11 @@ Driver::Driver(){
 
 }
 void Driver::addCabToDriver( string cab) {
-    Cab *cabO;
-    boost::iostreams::basic_array_source<char> device(cab.c_str(), cab.size());
-    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
-    boost::archive::binary_iarchive ia(s2);
-    ia >>cabO;
+     Cab *cabO;
+     boost::iostreams::basic_array_source<char> device(cab.c_str(), cab.size());
+     boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
+     boost::archive::binary_iarchive ia(s2);
+     ia >>cabO;
     this->taxi = cabO;
 }
 int Driver::getDriverCabID() {
@@ -178,7 +178,7 @@ void Driver::connectToTaxiCenter() {
 }
 //Driver(int id, int age, char status, int exp, int cabID);
 std::ostream& operator<< (std::ostream &os, const Driver &p){
-    os << '(' <<p.id<< ',' <<p.age << ',' <<p.status <<',' <<p.experience <<',' <<p.taxiID <<',' <<p.location->getiValue(1)<<',' << p.taxi->getID()<<')';
+    os << '(' <<p.id<< ',' <<p.age << ',' <<p.status <<',' <<p.experience <<',' <<p.taxiID <<',' <<p.location->getiValue(1)<<',' <<')';
     return os;
 }
 

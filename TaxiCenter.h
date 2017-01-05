@@ -166,7 +166,7 @@ public:
     /*
      * this function give to all driver taxi acoording to driver id
      */
-    string connectDriverToTaxi(string driver);
+    string connectDriverToTaxi(char *driver, char *end);
 
     /*
      * moveOneStep- move all the drivers that are in trip one step (according to type of the

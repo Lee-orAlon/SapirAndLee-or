@@ -1,8 +1,5 @@
 #ifndef EX2_POINT_H
 #define EX2_POINT_H
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/tokenizer.hpp>

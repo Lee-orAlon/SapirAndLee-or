@@ -1,5 +1,5 @@
 #include "TaxiCenter.h"
-
+using namespace std;
 TaxiCenter::TaxiCenter(Grid *grid, BFS *bfs) {
     this->bfs = bfs;
     this->cabs = new std::list<Cab *>;
@@ -94,7 +94,7 @@ string TaxiCenter::serializePath(int currentTime) {
         s.flush();
         return serial_str;
     }
-    return  NULL;
+    return  "NULL";
 }
 
 std::list<Trip *> *TaxiCenter::listOfTrip() {
@@ -205,6 +205,9 @@ double TaxiCenter::distanceOfDriverFromLocation(Driver *driver, Value *location)
     double sizeOfPath;
     std::list<Element*>*path = this->bfs->pathDrive(driver->getLocation(), location);
     sizeOfPath = path->size();
+
+
+
     delete(path);
     return sizeOfPath;
 }
@@ -231,12 +234,15 @@ void TaxiCenter::addDriver(Driver* driver) {
     this->drivers->push_back(driver);
 }
 
-string TaxiCenter::connectDriverToTaxi(string driver) {
-    Driver *driverD;
-    boost::iostreams::basic_array_source<char> device(driver.c_str(), driver.size());
+string TaxiCenter::connectDriverToTaxi(char *driver, char *end) {
+
+       Driver *driverD;
+    boost::iostreams::basic_array_source<char> device(driver, end);
     boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
     boost::archive::binary_iarchive ia(s2);
-    ia >> driverD;
+    ia >>driverD;
+
+
     this->addDriver(driverD);
     for (std::list<Cab *>::iterator cab = this->cabs->begin();
          cab != this->cabs->end(); cab++) {
@@ -246,14 +252,14 @@ string TaxiCenter::connectDriverToTaxi(string driver) {
             boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(
                     inserter);
             boost::archive::binary_oarchive oa(s);
-            oa << *cab;
-            delete driverD;
+            oa << (*cab);
+            s.flush();
+            cout << serial_str << endl;
             return serial_str;
         }
         //check
     }
-    delete driverD;
-    return 0;
+    return "NULL";
 }
 /*  std::list<Driver *>::iterator driver = this->drivers->begin();
   std::list<Cab *>::iterator cab = this->cabs->begin();

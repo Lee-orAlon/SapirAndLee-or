@@ -7,12 +7,13 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
+#include "Element.h"
 using namespace std;
 
 Driver * createDriver();
 string serializeDriver(Driver* d);
-Cab* deserializeCab(string cab);
-Trip* desirializeTrip(string trip);
+Cab *deserializeCab(char *cab, char *end);
+std::list<Element*> *desirializePath(char *trip, char *end);
 
 int main(int argc, char**argv) {
     if (argc == 3) {
@@ -23,18 +24,19 @@ int main(int argc, char**argv) {
         }
 
         driver= createDriver();
-        udp->sendData(serializeDriver(driver));
-       /* if(udp.sendData(driver)!=CORRECT){
-            perror("error writing to socket");
-        }*/
+        string driverStr = serializeDriver(driver);
+        udp->sendData(driverStr);
+        /* if(udp.sendData(driver)!=CORRECT){
+             perror("error writing to socket");
+         }*/
 
         //receive serialized cab from server.
         char buffer[4096];
         udp->reciveData(buffer, sizeof(buffer));
-        deserializeCab(buffer);
+        deserializeCab(buffer, buffer+4095);
 //        if(udp.reciveData(buffer,4096)!=-1){
-  //      deserializeCab(buffer);
-      //  }
+        //      deserializeCab(buffer);
+        //  }
 
         string closeSocket = "close";
         bool socketOpen = true;
@@ -43,32 +45,27 @@ int main(int argc, char**argv) {
             udp->sendData("send me data");
             udp->reciveData(buffer, sizeof(buffer));
             cout << "The server sent: " << buffer << endl;
-            if(buffer == "move"){
-
-            }
-            if(buffer == "trip"){
-
-            }
             if(buffer == "path"){
-
+                udp->reciveData(buffer, sizeof(buffer));
+                driver->enterPath(buffer);
             }
 //            if(udp.reciveData(buffer,4096)!=-1) {
-              //  if (buffer == "trip") {
-                //    if (udp->reciveData(buffer, 4096) != -1) {
-                  //      Trip *trip = desirializeTrip(buffer);
-                       // driver->setTrip(trip);
-                 //   }
-             //   }
-              /*  if (buffer == "move") {
-                    if (udp->reciveData(buffer, 4096) != -1) {
-                        /*TODO move*/
-                   // }
-              //  }
-                if (closeSocket.compare(buffer) == 0) {
-                    socketOpen = false;
-                }
+            //  if (buffer == "trip") {
+            //    if (udp->reciveData(buffer, 4096) != -1) {
+            //      Trip *trip = desirializePath(buffer);
+            // driver->setTrip(trip);
+            //   }
+            //   }
+            /*  if (buffer == "move") {
+                  if (udp->reciveData(buffer, 4096) != -1) {
+                      /*TODO move*/
+            // }
+            //  }
+            if (closeSocket.compare(buffer) == 0) {
+                socketOpen = false;
+            }
 
-          //  }
+            //  }
         }
         //close socket
 //        delete (udp);
@@ -77,24 +74,24 @@ int main(int argc, char**argv) {
 }
 
 Driver * createDriver() {
-     int id;
-     int age;
-     char status;
-     int experience;
-     int cabID;
-     char dummy;
+    int id;
+    int age;
+    char status;
+    int experience;
+    int cabID;
+    char dummy;
 
-     cin >> id;
-     cin >> dummy;
-     cin >> age;
-     cin >> dummy;
-     cin >> status;
-     cin >> dummy;
-     cin >> experience;
-     cin >> dummy;
-     cin >> cabID;
-     cin.ignore();
-     return new Driver(id, age, status, experience, cabID);
+    cin >> id;
+    cin >> dummy;
+    cin >> age;
+    cin >> dummy;
+    cin >> status;
+    cin >> dummy;
+    cin >> experience;
+    cin >> dummy;
+    cin >> cabID;
+    cin.ignore();
+    return new Driver(id, age, status, experience, cabID);
 }
 
 string serializeDriver(Driver* d){
@@ -104,25 +101,28 @@ string serializeDriver(Driver* d){
     boost::archive::binary_oarchive oa(s);
     oa << d;
     s.flush();
+
+
     return serial_str;
 }
-
-Cab* deserializeCab(string cab){
-   Cab *newCab;
-    boost::iostreams::basic_array_source<char> device(cab.c_str(), cab.size());
-    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
-    boost::archive::binary_iarchive ia(s2);
-    ia >>newCab;
-    return  newCab;
+Cab *deserializeCab(char *cab, char *end) {
+    if(cab!="NULL") {
+        Cab *newCab;
+        boost::iostreams::basic_array_source<char> device(cab, end);
+        boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
+        boost::archive::binary_iarchive ia(s2);
+        ia >> newCab;
+        return newCab;
+    }
 
 }
 
-Trip* desirializeTrip(string trip){
-    Trip *newTrip;
-    boost::iostreams::basic_array_source<char> device(trip.c_str(), trip.size());
+std::list<Element*> *desirializePath(char *path, char *end) {
+    std::list<Element*> *listElm;
+    boost::iostreams::basic_array_source<char> device(path, end);
     boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
     boost::archive::binary_iarchive ia(s2);
-    ia >>newTrip;
-    return  newTrip;
+    ia >>listElm;
+    return  listElm;
 
 }
