@@ -1,15 +1,29 @@
 #include "MainFlow.h"
 #include "Regular.h"
 #include "Luxury.h"
+#include "Udp.h"
 #include <list>
+
+int main(int argc, char**argv){
+    Udp udp = Udp(true,atoi(argv[1]));
+    MainFlow mainFlow();
+    char* buffer;
+
+    while (mainFlow().doUserRequest()!=7){
+
+    }
+
+    while (udp.sendData("close")!=CORRECT){}
+
+    delete (udp);
+}
 
 MainFlow::MainFlow() {
     this->map = createMap();
     this->taxiCenter = new TaxiCenter(map->getGrid(), new BFS(map));
-    this->counter=0;
-    this->numberOfDrivers = 0;
     this->addDrivers = false;
     this->clock = Clock();
+
    /* cin >> this->task;
     while (this->task != 7) {
         cin.ignore();
@@ -158,24 +172,12 @@ MainFlow::~MainFlow() {
 }
 
 /*TODO*/
-int MainFlow::getCounter() {
-    return  this->counter;
-}
-/*TODO*/
-int MainFlow::getNumberOfDrivers() {
-    return this->numberOfDrivers;
-}
-
-/*TODO*/
 int MainFlow::doUserRequest() {
-    cin >> task;
+    cin >> this->task;
     cin.ignore();
-    switch (task) {
+    switch (this->task) {
         case 1:
           //  this->taxiCenter->addDriver(createDriver());
-            cin >> this->numberOfDrivers;
-            cin.ignore();
-            this->counter++;
             break;
         case 2: {
             this->taxiCenter->createTrip(createTrip());
@@ -195,6 +197,7 @@ int MainFlow::doUserRequest() {
         }*/
         case 8: { /*TODO delete this case*/
             std::cout<<"try8"<<std::endl;
+
             break;
         }
         case 9: { /*TODO change the condition in if statement*/
@@ -210,6 +213,5 @@ int MainFlow::doUserRequest() {
 
         }
     }
-
     return this->task;
 }

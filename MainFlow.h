@@ -18,7 +18,7 @@ public:
     MainFlow();
 
     /**
-     * Destructo.
+     * Destructor.
      */
     ~MainFlow();
 
@@ -27,16 +27,9 @@ public:
 
     /*TODO- I've added this function- it returns the number of task.*/
     int  doUserRequest();
-    /*TODO i've added this function*/
-    int getCounter();
-    /*TODO i've added this function*/
-    int getNumberOfDrivers();
 private:
     int task;
-    /*TODO i've added this member*/
-    int counter; //Count the number of times that the user wanted to do task 1.
-    /*TODO i've added this member*/
-    int numberOfDrivers;
+    /*TODO I've removed the member counter and the member numberOfDrivers*/
     /*TODO i've added this member*/
     bool addDrivers;
     /*TODO i've added this member*/
