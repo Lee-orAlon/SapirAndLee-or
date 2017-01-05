@@ -42,7 +42,7 @@ MainFlow::MainFlow(int port) {
 
     }
 
-    while (udp->sendData("close")!=CORRECT){}
+    while (udp->sendData("0")!=CORRECT){}
 
     delete (udp);
 
@@ -176,6 +176,7 @@ Trip *MainFlow::createTrip() {
     cin >> numOfPassengers;
     cin >> dummy;
     cin >> tariff;
+    cin >> dummy;
     cin >> time;
     cin.ignore();
     return new Trip(id, new Point(xStart, yStart), new Point(xEnd, yEnd), numOfPassengers, tariff,time);
@@ -207,7 +208,7 @@ int MainFlow::doUserRequest() {
             this->udp->reciveData(buffer, sizeof(buffer));
             string dataTaxi = this->taxiCenter->connectDriverToTaxi(buffer, buffer+4095);
             cout << "The client sent: " << buffer << endl;
-           // this->udp->sendData("cab");
+             // this->udp->sendData("cab");
             if(!this->udp->sendData(dataTaxi)){
 
             }
@@ -248,11 +249,11 @@ int MainFlow::doUserRequest() {
             string path;
             do{
                 path = this->taxiCenter->serializePath(this->clock.getTime());
-                if(!path.compare("NULL")) {
-                    this->udp->sendData("path");
+                if(path.compare("NULL")!=0) {
+                    this->udp->sendData("2");
                     this->udp->sendData(path);
                 }
-            } while(!path.compare("NULL"));
+            } while(path.compare("NULL")!=0);
 
             this->taxiCenter->moveOneStep(this->clock.getTime());
           //  }

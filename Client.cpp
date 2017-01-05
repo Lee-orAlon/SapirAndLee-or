@@ -40,16 +40,18 @@ int main(int argc, char**argv) {
 
         string closeSocket = "close";
         string recievePath = "path";
+        string data;
         bool socketOpen = true;
 
         while (socketOpen) {
             udp->sendData("send me data");
             udp->reciveData(buffer, sizeof(buffer));
             cout << "The server sent: " << buffer << endl;
-            if(recievePath.compare(buffer)){
+            //if server sent "2" than add path to driver.
+            if(buffer[0]=='2'){
                 udp->reciveData(buffer, sizeof(buffer));
                 std::list<Element*> *path = desirializePath(buffer, buffer+4095);
-                driver->enterPath(buffer);
+                driver->enterPath(path);
             }
 //            if(udp.reciveData(buffer,4096)!=-1) {
             //  if (buffer == "trip") {
@@ -63,7 +65,8 @@ int main(int argc, char**argv) {
                       /*TODO move*/
             // }
             //  }
-            if (closeSocket.compare(buffer) == 0) {
+            //if servre sent "0" then communication end- close socket.
+            if (buffer[0]=='0') {
                 socketOpen = false;
             }
 

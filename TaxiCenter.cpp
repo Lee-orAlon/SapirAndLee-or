@@ -156,9 +156,9 @@ void TaxiCenter::deleteTripFromList(Trip *t) {
 void TaxiCenter::moveOneStep(int currentTime) {
     for (std::list<Driver *>::iterator it = this->drivers->begin();
          it != this->drivers->end(); it++) {
-        if ((*it)->isInTrip()) {
+        if ((*it)->isInTrip()&&((*it)->getCurrentTrip()->getStartTime() < currentTime)) {
             (*it)->move();
-            if (!(*it)->isInTrip()&&((*it)->getCurrentTrip()->getStartTime() < currentTime)) {
+            if (!(*it)->isInTrip()) {
                 //  setRateOfDriver((*it), (*it)->getCurrentTrip().listPassenger());
                 this->deleteTripFromList((*it)->getCurrentTrip());
             }
