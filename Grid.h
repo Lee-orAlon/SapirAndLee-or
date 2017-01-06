@@ -1,10 +1,5 @@
-//
-// Created by sapir on 29/11/16.
-//
-
 #ifndef EX2_GRID_H
 #define EX2_GRID_H
-
 
 #include "Point.h"
 #include "Square.h"

@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Point.h"
 #include <boost/serialization/export.hpp>
+
 Point::Point(int xValue, int yValue) {
     this->x = xValue;
     this->y = yValue;
@@ -9,9 +10,10 @@ Point::Point(int xValue, int yValue) {
 int Point::getX() {
     return this->x;
 }
-Point::Point(){
 
+Point::Point() {
 }
+
 int Point::getY() {
     return this->y;
 }
@@ -41,4 +43,5 @@ bool Point::operator!=(const Point &other) const {
 
 Point::~Point() {
 }
-BOOST_CLASS_EXPORT( Point);
+
+BOOST_CLASS_EXPORT(Point);

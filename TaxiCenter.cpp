@@ -1,12 +1,11 @@
 #include "TaxiCenter.h"
+
 using namespace std;
+
 TaxiCenter::TaxiCenter(Grid *grid, BFS *bfs) {
     this->bfs = bfs;
     this->cabs = new std::list<Cab *>;
     this->drivers = new std::list<Driver *>;
-
-
-
     this->grid = grid;
     this->trip = new std::list<Trip *>;
 }
@@ -18,7 +17,6 @@ TaxiCenter::~TaxiCenter() {
     Driver *driver;
     for (std::list<Driver *>::iterator it = this->drivers->begin();
          it != this->drivers->end(); it++) {
-
         driver = (*it);
         (*it) = NULL;
         delete (driver);
@@ -52,29 +50,20 @@ std::list<Driver *> *TaxiCenter::listOfDriver() {
 void TaxiCenter::createTrip(Trip *t) {
     this->trip->push_back(t);
 }
-std::list<Element*>*TaxiCenter::findPath(Driver* d){
-    std::list<Element *> *pathD = this->bfs->pathDrive((d)->getCurrentTrip()->getStart(),
-                                                       (d)->getCurrentTrip()->getEnd());
-    pathD->remove(*pathD->begin());
-    return pathD;
-}
 
-/*TODO i've changed this function*/
-Trip* TaxiCenter::connectDriverToTrip(int currntTime) {
+Trip *TaxiCenter::connectDriverToTrip(int currntTime) {
     std::list<Trip *>::iterator it = this->trip->begin();
     for (std::list<Trip *>::iterator it = this->trip->begin();
          it != this->trip->end(); it++) {
-        if(((*it)->getStartTime() == currntTime)&&((*it)->doesTripHasDriver()== false)) {
+        if (((*it)->getStartTime() == currntTime) && ((*it)->doesTripHasDriver() == false)) {
             Driver *d = this->findClosestDriver((*it)->getStart());
             if (d != NULL) {
                 (*it)->setTripHasDriverToBeTrue();
                 d->setTrip(*it);
 
-
-                  std::list<Element *> *pathD = this->bfs->pathDrive((*it)->getStart(),
-                          (*it)->getEnd());
-                 pathD->remove(*pathD->begin());
-                //d->setTrip((*it), pathD);
+                std::list<Element *> *pathD = this->bfs->pathDrive((*it)->getStart(),
+                                                                   (*it)->getEnd());
+                pathD->remove(*pathD->begin());
                 d->setPath(pathD);
                 (*it)->setTripHasDriverToBeTrue();
                 return (*it);
@@ -86,23 +75,21 @@ Trip* TaxiCenter::connectDriverToTrip(int currntTime) {
 
 string TaxiCenter::serializePath(int currentTime) {
     Trip *trip = this->connectDriverToTrip(currentTime);
-    if(trip!=NULL) {
-        std::list<Element*> *path = this->createPath(trip->getStart(), trip->getEnd());
-        for (std::list<Element *>::iterator it = path->begin();
-             it != path->end(); it++) {
-            (*it)->getMyLocation()->printValue();
-        }
+    if (trip != NULL) {
+        std::list<Element *> *path = this->createPath(trip->getStart(), trip->getEnd());
+        path->remove(*path->begin());
         std::string serial_str;
         boost::iostreams::back_insert_device<std::string> inserter(serial_str);
         boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
         boost::archive::binary_oarchive oa(s);
-        oa <<path;
+        oa << path;
         s.flush();
-        delete(path);
+        delete (path);
         return serial_str;
     }
-    return  "NULL";
+    return "NULL";
 }
+
 std::list<Trip *> *TaxiCenter::listOfTrip() {
     return this->trip;
 }
@@ -163,7 +150,7 @@ bool TaxiCenter::moveOneStep(int currentTime) {
     bool someoneMoved = false;
     for (std::list<Driver *>::iterator it = this->drivers->begin();
          it != this->drivers->end(); it++) {
-        if ((*it)->isInTrip()&&((*it)->getCurrentTrip()->getStartTime() < currentTime)) {
+        if ((*it)->isInTrip() && ((*it)->getCurrentTrip()->getStartTime() < currentTime)) {
             (*it)->move();
             someoneMoved = true;
             if (!(*it)->isInTrip()) {
@@ -174,12 +161,6 @@ bool TaxiCenter::moveOneStep(int currentTime) {
     }
     return someoneMoved;
 }
-
-/*void TaxiCenter::moveAllDrivers() {
-    while (this->numberOfTrip() > 0) {
-        this->moveOneStep();
-    }
-}*/
 
 void TaxiCenter::setRateOfDriver(Driver *driver, std::list<Passenger *> *listPassenger) {
     double avarageRate = 0;
@@ -212,12 +193,9 @@ void TaxiCenter::addCab(Cab *cab) {
 
 double TaxiCenter::distanceOfDriverFromLocation(Driver *driver, Value *location) {
     double sizeOfPath;
-    std::list<Element*>*path = this->bfs->pathDrive(driver->getLocation(), location);
+    std::list<Element *> *path = this->bfs->pathDrive(driver->getLocation(), location);
     sizeOfPath = path->size();
-
-
-
-    delete(path);
+    delete (path);
     return sizeOfPath;
 }
 
@@ -239,18 +217,17 @@ Value *TaxiCenter::getDriverLocation(int driverID) {
     }
     return NULL;
 }
-void TaxiCenter::addDriver(Driver* driver) {
+
+void TaxiCenter::addDriver(Driver *driver) {
     this->drivers->push_back(driver);
 }
 
 string TaxiCenter::connectDriverToTaxi(char *driver, char *end) {
-
-       Driver *driverD;
+    Driver *driverD;
     boost::iostreams::basic_array_source<char> device(driver, end);
     boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
     boost::archive::binary_iarchive ia(s2);
-    ia >>driverD;
-
+    ia >> driverD;
 
     this->addDriver(driverD);
     for (std::list<Cab *>::iterator cab = this->cabs->begin();
@@ -264,21 +241,8 @@ string TaxiCenter::connectDriverToTaxi(char *driver, char *end) {
             boost::archive::binary_oarchive oa(s);
             oa << (*cab);
             s.flush();
-            cout << serial_str << endl;
             return serial_str;
         }
-        //check
     }
     return "NULL";
 }
-/*  std::list<Driver *>::iterator driver = this->drivers->begin();
-  std::list<Cab *>::iterator cab = this->cabs->begin();
-  for (std::list<Cab *>::iterator cab = this->cabs->begin();
-       cab != this->cabs->end(); cab++) {
-      for (std::list<Driver *>::iterator driver = this->drivers->begin();
-           driver != this->drivers->end(); driver++) {
-          if ((*driver)->getDriverCabID() == (*cab)->getID()) {
-              (*driver)->addCabToDriver((*cab));
-          }
-      }
-  }*/

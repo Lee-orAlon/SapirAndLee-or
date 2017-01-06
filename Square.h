@@ -1,5 +1,6 @@
 #ifndef EX2_SQUARE_H
 #define EX2_SQUARE_H
+
 #include <iostream>
 #include "Point.h"
 #include "Element.h"
@@ -18,7 +19,7 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/export.hpp>
-/**
+
 /**
  * Square class- this class represents a square in a 2D matrix.
  * This class extends the 'Element' class.
@@ -40,20 +41,21 @@ private:
         notValid = 5
     };
     enum Directions fatherDirection;
+
     friend class boost::serialization::access;
+
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int version)
-    {
-        ar &leftNeighbor;
+    void serialize(Archive &ar, const unsigned int version) {
+        ar & leftNeighbor;
         ar & rightNeighbor;
-        ar&upNeighbor;
-        ar &downNeighbor;
-        ar &visited;
-        ar&myLocation;
-        ar&fatherDirection;
-        ar& boost::serialization::base_object<Element>(*this);
-//        boost::serialization::access::destroy;
+        ar & upNeighbor;
+        ar & downNeighbor;
+        ar & visited;
+        ar & myLocation;
+        ar & fatherDirection;
+        ar & boost::serialization::base_object<Element>(*this);
     }
+
 public:
     /**
      * Defualt constructor.

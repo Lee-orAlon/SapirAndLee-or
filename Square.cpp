@@ -147,4 +147,5 @@ bool Square::hasFatherDirection() {
 void Square::setUnvisited() {
     this->visited = false;
 }
+
 BOOST_CLASS_EXPORT(Square);

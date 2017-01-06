@@ -1,8 +1,7 @@
 #include <iostream>
 #include "Trip.h"
 
-/*TODO i've changed this function*/
-Trip::Trip(Value *start, Value *end, std::list<Passenger *> *passengers, double tariff, int time) {
+Trip::Trip(Value *start, Value *end, std::list<Passenger *> *passengers, double tariff, int time){
     this->start = start;
     this->end = end;
     this->passengers = passengers;
@@ -16,7 +15,6 @@ Trip::Trip(Value *start, Value *end, std::list<Passenger *> *passengers, double 
     this->hasDriver = false;
 }
 
-/*TODO i've changed this function*/
 Trip::Trip(int id, Value *start, Value *end, int numberOfPassengers, double tariff, int time) {
     this->start = start;
     this->end = end;
@@ -90,15 +88,14 @@ Trip::~Trip() {
     delete (this->passengers);
 }
 
-/*TODO i've added this function*/
 int Trip::getStartTime() {
-    return  this->startTime;
+    return this->startTime;
 }
-/*TODO i've added this function*/
+
 bool Trip::doesTripHasDriver() {
     return this->hasDriver;
 }
-/*TODO i've added this function*/
+
 void Trip::setTripHasDriverToBeTrue() {
     this->hasDriver = true;
 }

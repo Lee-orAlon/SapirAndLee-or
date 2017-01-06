@@ -1,7 +1,6 @@
 #ifndef EX2_ELEMENT_H
 #define EX2_ELEMENT_H
 
-
 #include "Value.h"
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -15,15 +14,17 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include "Value.h"
+
 /**
  * Element class- this class represents a location of an Element in a Grid.
  */
 class Element {
     friend class boost::serialization::access;
+
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int version)
-    {
+    void serialize(Archive &ar, const unsigned int version) {
     }
+
 public:
     /**
      * setLeftNeighbor.
@@ -92,28 +93,28 @@ public:
     /**
      * getLeftNeighbor.
      * @return the left neighbor of this Element in the Grid.
-     * Note: If this Element doesn't have a left neighbor, then the returned value will be 'NULL'.
+     * Note: If this Element doesn't have a left neighbor, then the returned value will be 'NULL'
      */
     virtual Value *getLeftNeighbor()=0;
 
     /**
      * getRightNeighbor.
      * @return the right neighbor of this Element in the Grid.
-     * Note: If this Element doesn't have a right neighbor, then the returned value will be 'NULL'.
+     * Note: If this Element doesn't have a right neighbor, then the returned value will be 'NULL'
      */
     virtual Value *getRightNeighbor()=0;
 
     /**
      * getUpNeighbor.
      * @return the neighbor above this Element in the Grid.
-     * Note: If this Element doesn't have a neighbor above, then the returned value will be 'NULL'.
+     * Note: If this Element doesn't have a neighbor above, then the returned value will be 'NULL'
      */
     virtual Value *getUpNeighbor()=0;
 
     /**
      * getDownNeighbor.
      * @return the neighbor below this Element in the Grid.
-     * Note: If this Element doesn't have a neighbor below, then the returned value will be 'NULL'.
+     * Note: If this Element doesn't have a neighbor below, then the returned value will be 'NULL'
      */
     virtual Value *getDownNeighbor()=0;
 
@@ -140,5 +141,6 @@ public:
 
     virtual bool hasFatherDirection()=0;
 };
+
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(Element)
 #endif //ASS1_ELEMENT_H

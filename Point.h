@@ -1,5 +1,6 @@
 #ifndef EX2_POINT_H
 #define EX2_POINT_H
+
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/tokenizer.hpp>
@@ -16,6 +17,7 @@
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/export.hpp>
 #include "Value.h"
+
 /**
  * Point class- represents a point (x,y) in 2D world. This class extends the 'Value' class.
  */
@@ -23,15 +25,16 @@ class Point : public Value {
 private:
     int x;
     int y;
+
     friend class boost::serialization::access;
 
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int version)
-    {
+    void serialize(Archive &ar, const unsigned int version) {
         ar & x;
         ar & y;
-        ar& boost::serialization::base_object<Value>(*this);
+        ar & boost::serialization::base_object<Value>(*this);
     }
+
 public:
     /**
      * Constructor.
@@ -39,6 +42,11 @@ public:
      * @param yValue - the value of the point in y axis.
      */
     Point(int xValue, int yValue);
+
+    /**
+     * Constructor.
+     * @return
+     */
     Point();
 
     /**
@@ -72,8 +80,10 @@ public:
      */
     ~Point();
 
+    //Override to equal operand.
     bool operator==(const Point &other) const;
 
+    //Override to not-equal operand.
     bool operator!=(const Point &other) const;
 };
 

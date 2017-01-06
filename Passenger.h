@@ -16,6 +16,7 @@
 #include <boost/iostreams/stream.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
+
 /**
  * Passenger class- a class of a single Passenger.
  */
@@ -24,23 +25,23 @@ private:
     Point *source;
     Point *destination;
     double rate;
+
     friend class boost::serialization::access;
+
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int version)
-    {
+    void serialize(Archive &ar, const unsigned int version) {
         ar & source;
         ar & destination;
-        ar& rate;
-
-
+        ar & rate;
     }
+
 public:
     /**
      * Constructor.
      * @param sorce the source point of this Passenger.
      * @param destination the destination point of this Passenger.
      */
-    Passenger(Point *sorce,Point *destination);
+    Passenger(Point *sorce, Point *destination);
 
     /**
      * Defualt constructor.

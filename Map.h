@@ -6,8 +6,8 @@
 #include <list>
 
 /**
- * Map class - a class of a single Map. This map contains a Grid and a list of obstacles in the map
- * (in the world).
+ * Map class - a class of a single Map. This map contains a Grid and a list of obstacles in the
+ * map(in the world).
  */
 class Map {
 private:
