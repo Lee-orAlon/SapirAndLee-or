@@ -1,8 +1,6 @@
-//
-// Created by lee-or on 29/11/16.
-//
 #ifndef EX2_CAB_H
 #define EX2_CAB_H
+
 #include <string>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -16,16 +14,17 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/serialization/base_object.hpp>
+
 class Cab {
 private:
     /*
-     * 1-red
-     * 2-blue
-     * 3-green
-     * 4-pink
-     * 5-
+     * 1- Red
+     * 2- Blue
+     * 3- Green
+     * 4- Pink
+     * 5- White
      */
-    enum Color{
+    enum Color {
         R = 1,
         B = 2,
         G = 3,
@@ -33,12 +32,12 @@ private:
         W = 5
     };
     /*
-     * 1-honda
-     * 2-subaro
-     * 3-
-     * 4-fiat
+     * 1- Honda
+     * 2- Subaro
+     * 3- Tesla
+     * 4- Fiat
      */
-    enum Manufacturer{
+    enum Manufacturer {
         H = 1,
         S = 2,
         T = 3,
@@ -52,22 +51,58 @@ private:
     Manufacturer manufacturer;
     double tariff;
     double kmPassed;
+
     friend class boost::serialization::access;
+
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int version)
-    {
-        ar &id;
+    void serialize(Archive &ar, const unsigned int version) {
+        ar & id;
         ar & color;
-        ar& manufacturer;
+        ar & manufacturer;
     }
+
 public:
-    Cab(int id, char color,char manufacturer);
+    /**
+     * Constructor.
+     * @param id the ID of the cab.
+     * @param color the color of the cab.
+     * @param manufacturer the manufacturer of the cab.
+     */
+    Cab(int id, char color, char manufacturer);
+
+    /**
+     * Constructor.
+     */
     Cab();
+
+    /**
+     * Destructor.
+     */
     ~Cab();
-    double getTariff ();
-    virtual double getPassedKm ()=0;
+
+    /**
+     * getTariff.
+     * @return the tariff of this cab.
+     */
+    double getTariff();
+
+    /**
+     * getPassedKm.
+     * @return the number of km that this cab has passed.
+     */
+    virtual double getPassedKm()=0;
+
+    /**
+     * getID.
+     * @return the ID of this cab.
+     */
     int getID();
-    virtual int move ()=0;
+
+    /**
+     * move- this function manages the movments of this Cab.
+     */
+    virtual int move()=0;
 };
+
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(Cab)
 #endif //EX2_ADVANCEDPROGRAMMING1_CAB_H

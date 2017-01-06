@@ -1,60 +1,47 @@
-/**
-    * cab
-    * @param source tid of dab color and magnufactur
-    * @param
-    * This function it constructor
-    */
 #include "Cab.h"
-Cab::Cab(int id, char color,char manufacturer){
-    if(color=='B'){
-        this->color= B;
+
+Cab::Cab(int id, char color, char manufacturer) {
+    if (color == 'B') {
+        this->color = B;
     }
-    if(color=='G'){
+    if (color == 'G') {
         this->color = G;
     }
-    if(color=='P'){
+    if (color == 'P') {
         this->color = P;
     }
-    if(color=='R'){
+    if (color == 'R') {
         this->color = R;
     }
-    if(color=='W'){
+    if (color == 'W') {
         this->color = W;
     }
-    if(manufacturer=='F'){
+    if (manufacturer == 'F') {
         this->manufacturer = F;
     }
-    if(color=='H'){
+    if (color == 'H') {
         this->manufacturer = H;
     }
-    if(color=='S'){
+    if (color == 'S') {
         this->manufacturer = S;
     }
-    if(color=='T'){
+    if (color == 'T') {
         this->manufacturer = T;
     }
-    this->id=id;
+    this->id = id;
 }
-Cab::Cab(){
+
+Cab::Cab() {
 }
-Cab::~Cab(){
+
+Cab::~Cab() {
 }
-/**
-    * cab
-    * @param source nothing
-    * @param  return tariff of cab
-    * This function it constructor
-    */
-double Cab::getTariff (){
+
+double Cab::getTariff() {
     return this->tariff;
 }
-/**
-    * getID
-    * @param source nothing
-    * @param  return id of cab
-    * This function it constructor
-    */
-int Cab::getID(){
+
+int Cab::getID() {
     return this->id;
 }
 
