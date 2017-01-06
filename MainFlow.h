@@ -23,19 +23,10 @@ public:
      */
     ~MainFlow();
 
-    /*TODO- I've changed this function signature and did this function public (it was private before the changing)*/
-    Driver *createDriver(char * driver);
-
-    /*TODO- I've added this function- it returns the number of task.*/
-    int  doUserRequest();
 private:
     bool isThereConnection;
     int task;
     Udp *udp;
-    /*TODO I've removed the member counter and the member numberOfDrivers*/
-    /*TODO i've added this member*/
-    bool addDrivers;
-    /*TODO i've added this member*/
     Clock clock;
     TaxiCenter *taxiCenter;
     Map *map;
@@ -46,8 +37,7 @@ private:
      */
     Map *createMap();
 
-
-
+    //This function is not relevant for this exercise.
     Passenger *createPassenger();
 
     /**
@@ -66,8 +56,6 @@ private:
      * printDriverLocation- print a driver's location (by the driver's ID).
      */
     void printDriverLocation();
-
-
 };
 
 #endif //EX3_MAINFLOW_H

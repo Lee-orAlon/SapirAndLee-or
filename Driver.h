@@ -1,6 +1,6 @@
-
 #ifndef EX2_DRIVER_H
 #define EX2_DRIVER_H
+
 #include <queue>
 #include "Trip.h"
 #include "Cab.h"
@@ -23,12 +23,14 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/serialization/list.hpp>
+
 /*
 /**
  * Driver class- a class of a single driver.
  */
 using namespace std;
 using namespace boost::archive;
+
 class Driver {
 private:
     int numberOfRate;
@@ -47,7 +49,7 @@ private:
     Cab *taxi;
     bool inTrip;
     Trip *drive;
-    Value* location;
+    Value *location;
     double rate;
     int taxiID;
 
@@ -56,30 +58,33 @@ private:
      * @param drive 'true' if the driver is in trip. Else, 'false'.
      */
     void setInTrip(bool drive);
+
     /**
      * isThereNextStep.
      * @return 'true' if the next step is not 'NULL'. Else, returns 'false'.
      */
     bool isThereNextStep();
+
     friend class boost::serialization::access;
+
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int version)
-    {
+    void serialize(Archive &ar, const unsigned int version) {
         ar & id;
         ar & age;
-        ar& status;
-        ar &experience;
-        ar &taxiID;
-        ar &numberOfRate;
-        ar &rate;
-        ar &inTrip;
-        ar &location;
-        ar &taxi;
-        ar &path;
+        ar & status;
+        ar & experience;
+        ar & taxiID;
+        ar & numberOfRate;
+        ar & rate;
+        ar & inTrip;
+        ar & location;
+        ar & taxi;
+        ar & path;
     }
 
 public:
-    friend std::ostream& operator<< (std::ostream &os, const Driver &p);
+    friend std::ostream &operator<<(std::ostream &os, const Driver &p);
+
     /**
      * constructor.
      * @param id the ID of this Driver.
@@ -88,9 +93,14 @@ public:
      * @param cab the taxi of this Driver.
      * @param currentLocation the current location of this Driver.
      */
-    /*TODO I'echanged this constructor (char insteadof int)*/
-    Driver(int id, int age, char status, Cab *cab, Value* currentLocation,int experience);
+    Driver(int id, int age, char status, Cab *cab, Value *currentLocation, int experience);
+
+    /**
+     * Constructor.
+     * @return
+     */
     Driver();
+
     /**
      * Destructor.
      */
@@ -131,9 +141,8 @@ public:
      * @param givenTrip the Trip of this Driver.
      */
     void setTrip(Trip *givenTrip);
-    void enterTrip(string t);
-    void enterPath(char *path, char *end);
 
+    void enterPath(char *path, char *end);
 
     /**
      * getCab.
@@ -147,60 +156,66 @@ public:
     void move();
 
     /**
-    * constructor
-    * @param source int id, int age, char status, int exp, int cabID)
-    * @param  return
-            * This function it constructor
-    */
+     * Cnstructor.
+     * @param id the ID of the driver.
+     * @param age the age of the driver.
+     * @param status the status of the driver.
+     * @param exp years of experience of the driver.
+     * @param cabID the ID of the cab of the driver.
+     */
     Driver(int id, int age, char status, int exp, int cabID);
-/**
-    * constructor
-    * @param source this function recuve cab
-    * @param  return
-            * add the cab to the drive
-    */
-    void addCabToDriver( string cab);
+
     /**
-    * getDriverCabID
-    * @param source
-    * @param  return
-            * get the id of cab
-    */
+     * getDriverCabID.
+     * @return the ID of the cab of this driver.
+     */
     int getDriverCabID();
 
     /**
-      * constructor
-      * @param source
-      * @param  return
-              * get the  cuu=rrent trip
-      */
+     * getCurrentTrip.
+     * @return the current trip of the driver.
+     */
     Trip *getCurrentTrip();
 
     /**
-      * setrate
-      * @param source number of new rater ,new rate
-      * @param  the function update the rate of the driver
-
-      */
-    void setRate(double numberRateThisDrive,int numberOfPeople);
+     * setRate - the function update the rate of the driver.
+     * @param numberRateThisDrive the rate that the passenger(s) gave to driver.
+     * @param numberOfPeople number of people that rated the driver.
+     */
+    void setRate(double numberRateThisDrive, int numberOfPeople);
 
     /**
-      * constructor
-      * @param source
-      * @param  return
-              * get the  cuu=rrent trip
-      */
-    std::list<Element*>*getPath();
+     * getPath.
+     * @return the path of the trip of the driver.
+     */
+    std::list<Element *> *getPath();
 
-    /**TODO*/
-    void connectToTaxiCenter();
-    bool operator==(const Driver &other)const;
+    //Override to the equal operand.
+    bool operator==(const Driver &other) const;
 
+    /**
+     * setPath.
+     * @param p the path that is given to the driver.
+     */
     void setPath(std::list<Element *> *p);
 
+    /**
+     * setCab.
+     * @param cab the cab that is given to the driver.
+     */
     void setCab(Cab *cab);
 
+    /**
+     * doNextMove- move the driver one step(according to its cab).
+     */
     void doNextMove();
+
+    /**
+     * deserializeCab.
+     * @param cab the begining of the buffer which contains the cab's information.
+     * @param end the end of the buffer which contains the cab's information.
+     */
+    Cab *deserializeCab(char *cab, char *end);
 };
 
 #endif //EX2_ADVANCEDPROGRAMMING1_DRIVER_H
