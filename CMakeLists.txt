@@ -9,13 +9,13 @@ find_package(Boost 1.58.0 COMPONENTS serialization system)
 include_directories(${Boost_INCLUDE_DIR})
 
 
-set(SOURCE_FILES_CLIENT main.cpp BFS.cpp BFS.h Cab.cpp Cab.h Driver.cpp Driver.h Element.cpp
+set(SOURCE_FILES_CLIENT BFS.cpp BFS.h Cab.cpp Cab.h Driver.cpp Driver.h Element.cpp
         Element.h Grid.cpp Grid.h Luxury.cpp Luxury.h MainFlow.cpp MainFlow.h Map.cpp Map.h
         Matrix.cpp Matrix.h Passenger.cpp Passenger.h Point.cpp Point.h Regular.cpp Regular.h
         Square.cpp Square.h TaxiCenter.cpp TaxiCenter.h Trip.cpp Trip.h Value.cpp Value.h
         Client.cpp Client.h Clock.cpp Clock.h Socket.cpp Socket.h Tcp.cpp Tcp.h Udp.cpp Udp.h)
 
-set(SOURCE_FILES_SERVER main.cpp BFS.cpp BFS.h Cab.cpp Cab.h Driver.cpp Driver.h Element.cpp
+set(SOURCE_FILES_SERVER BFS.cpp BFS.h Cab.cpp Cab.h Driver.cpp Driver.h Element.cpp
         Element.h Grid.cpp Grid.h Luxury.cpp Luxury.h MainFlow.cpp MainFlow.h Map.cpp Map.h
         Matrix.cpp Matrix.h Passenger.cpp Passenger.h Point.cpp Point.h Regular.cpp Regular.h
         Square.cpp Square.h TaxiCenter.cpp TaxiCenter.h Trip.cpp Trip.h Value.cpp Value.h
