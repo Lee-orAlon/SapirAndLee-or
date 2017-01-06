@@ -49,6 +49,12 @@ MainFlow::MainFlow(int port) {
                 this->udp->reciveData(buffer, sizeof(buffer));
                 this->clock.increaseTimeByOne();
                 string path;
+                bool move = this->taxiCenter->moveOneStep(this->clock.getTime());
+                if(move) {
+                    udp->sendData("9"); //tell client to move.
+                } else {
+                    udp->sendData("5"); //tell client to do nothing.
+                }
                 do{
                     path = this->taxiCenter->serializePath(this->clock.getTime());
                     if(path.compare("NULL")!=0) {
@@ -60,12 +66,7 @@ MainFlow::MainFlow(int port) {
                 if(path.compare("NULL")==0){
                     udp->sendData("5"); //tell client to do nothing.
                 }
-                bool move = this->taxiCenter->moveOneStep(this->clock.getTime());
-                if(move) {
-                    udp->sendData("9"); //tell client to move.
-                } else {
-                    udp->sendData("5"); //tell client to do nothing.
-                }
+
                 break;
             }
             default: {
