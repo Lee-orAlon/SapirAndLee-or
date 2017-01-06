@@ -14,6 +14,8 @@ Driver * createDriver();
 //make serilizazia to driver
 string serializeDriver(Driver* d);
 Cab *deserializeCab(char *cab, char *end);
+//make desirloze to list that contain path of path of driver
+//std::list<Element*> *desirializePath(char *trip, char *end);
 
 int main(int argc, char**argv) {
     //project name,port number,ip address -three parameters
@@ -45,7 +47,7 @@ int main(int argc, char**argv) {
                 }
                 case 2:{//if server sent "2" than add path to driver.
                     udp->reciveData(buffer, sizeof(buffer));
-                    std::list<Element*> *path = desirializePath(buffer, buffer+4095);
+                    //std::list<Element*> *path = desirializePath(buffer, buffer+4095);
                     driver->enterPath(buffer, buffer+4095);
                     udp->sendData("ok");
                     break;
@@ -112,3 +114,14 @@ Cab *deserializeCab(char *cab, char *end) {
     }
 
 }
+
+/*std::list<Element*> *desirializePath(char *path, char *end) {
+    std::list<Element*> *listElm;
+    boost::iostreams::basic_array_source<char> device(path, end);
+    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
+    boost::archive::binary_iarchive ia(s2);
+    ia >>listElm;
+    return  listElm;
+
+
+}*/

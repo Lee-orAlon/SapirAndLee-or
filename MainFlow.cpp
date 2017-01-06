@@ -2,36 +2,60 @@
 #include "Regular.h"
 #include "Luxury.h"
 
+#include <list>
+
+/*int main(int argc, char**argv){
+    MainFlow mainFlow(argv);
+    Udp udp = Udp(true,atoi(argv[1]));
+    MainFlow mainFlow();
+    char* buffer;
+
+    while (mainFlow().doUserRequest()!=7){
+
+    }
+
+    while (udp.sendData("close")!=CORRECT){}
+
+    delete (udp);
+
+}*/
+
 MainFlow::MainFlow(int port) {
     this->map = createMap();
     this->taxiCenter = new TaxiCenter(map->getGrid(), new BFS(map));
+    this->addDrivers = false;
     this->clock = Clock();
-    this->udp = new Udp(true, port);
-    this->isThereConnection = false;
+    this->udp = new Udp(true,port);
+   // this->udp->initialize();
+   // char* buffer;
+   /* int work;
+    do{
+        work = this->udp->reciveData(buffer, 4096);
+    } while(work ==-1);
+    cout << "The server sent: " << buffer << endl;
+    */
+   // this->udp = Udp(true,atoi(argv[1]));
 
-    do {
-        cin >> this->task;
+   // char* buffer;
+    this-> isThereConnection = false;
+
+    while (this->doUserRequest()!=7){
+
+    }
+
+    while (udp->sendData("0")!=CORRECT){}
+
+    delete (udp);
+
+   /* cin >> this->task;
+    while (this->task != 7) {
         cin.ignore();
-        switch (this->task) {
-            case 1: {
-                int numOfDrivers;
-                cin >> numOfDrivers;
-                this->udp->initialize();
-                char buffer[4096];
-                this->udp->reciveData(buffer, sizeof(buffer));
-                string dataTaxi = this->taxiCenter->connectDriverToTaxi(buffer, buffer + 4095);
-                // send serialized cab to the driver.
-                if (!this->udp->sendData(dataTaxi)) {
-
-                }
-                this->isThereConnection = true;
+        switch (task) {
+            case 1:
+                this->taxiCenter->addDriver(createDriver());
                 break;
-            }
             case 2: {
                 this->taxiCenter->createTrip(createTrip());
-                if (this->isThereConnection) {
-                    udp->sendData("5");
-                }
                 break;
             }
             case 3:
@@ -39,41 +63,16 @@ MainFlow::MainFlow(int port) {
                 break;
             case 4:
                 printDriverLocation();
-                //if there is a connection between server to client, tell client to do nothing.
-                if (this->isThereConnection) {
-                    udp->sendData("5");
-                }
                 break;
-            case 9: {
-                string path;
-                char buffer[4096];
-                this->udp->reciveData(buffer, sizeof(buffer));
-                this->clock.increaseTimeByOne();
-                do {
-                    path = this->taxiCenter->serializePath(this->clock.getTime());
-                    if (path.compare("NULL") != 0) {
-                        this->udp->sendData("2"); //tell client to deserialize the next given path.
-                        this->udp->sendData(path);
-                    }
-                } while (path.compare("NULL") != 0);
-
-                if (path.compare("NULL") == 0) {
-                    udp->sendData("5"); //tell client to do nothing.
-                }
-                bool move = this->taxiCenter->moveOneStep(this->clock.getTime());
-                if (move) {
-                    udp->sendData("9"); //tell client to move.
-                } else {
-                    udp->sendData("5"); //tell client to do nothing.
-                }
+            case 6: {
+                this->taxiCenter->connectDriverToTaxi();
+                this->taxiCenter->connectDriverToTrip();
+                this->taxiCenter->moveAllDrivers();
                 break;
             }
         }
-    } while (this->task != 7);
-
-    while (udp->sendData("0") != CORRECT) {}
-
-    delete (udp);
+        cin >> task;
+    }*/
 }
 
 Map *MainFlow::createMap() {
@@ -103,6 +102,29 @@ Map *MainFlow::createMap() {
     Map *m = new Map(obstacles, sizes);
     delete (sizes);
     return m;
+}
+
+Driver *MainFlow::createDriver(char *driver) {
+   /* int id;
+    int age;
+    char status;
+    int experience;
+    int cabID;
+    char dummy;
+
+    cin >> id;
+    cin >> dummy;
+    cin >> age;
+    cin >> dummy;
+    cin >> status;
+    cin >> dummy;
+    cin >> experience;
+    cin >> dummy;
+    cin >> cabID;
+    cin.ignore();
+    return new Driver(id, age, status, experience, cabID);
+    */
+
 }
 
 Cab *MainFlow::createCab() {
@@ -158,8 +180,7 @@ Trip *MainFlow::createTrip() {
     cin >> dummy;
     cin >> time;
     cin.ignore();
-    return new Trip(id, new Point(xStart, yStart), new Point(xEnd, yEnd), numOfPassengers, tariff,
-                    time);
+    return new Trip(id, new Point(xStart, yStart), new Point(xEnd, yEnd), numOfPassengers, tariff,time);
 }
 
 void MainFlow::printDriverLocation() {
@@ -172,4 +193,83 @@ void MainFlow::printDriverLocation() {
 MainFlow::~MainFlow() {
     delete (this->taxiCenter);
     delete (this->map);
+}
+
+/*TODO*/
+int MainFlow::doUserRequest() {
+    cin >> this->task;
+    cin.ignore();
+    switch (this->task) {
+        case 1: {
+            int numOfDrivers;
+            cin>>numOfDrivers;
+            //  this->taxiCenter->addDriver(createDriver());
+            this->udp->initialize();
+            char buffer[4096];
+            this->udp->reciveData(buffer, sizeof(buffer));
+            string dataTaxi = this->taxiCenter->connectDriverToTaxi(buffer, buffer+4095);
+            cout << "The client sent: " << buffer << endl;
+             // this->udp->sendData("cab");
+            if(!this->udp->sendData(dataTaxi)){
+
+            }
+            this->isThereConnection = true;
+            break;
+        } case 2: {
+            this->taxiCenter->createTrip(createTrip());
+            if(this->isThereConnection){
+                udp->sendData("5");
+            }
+            break;
+        }
+        case 3:
+            this->taxiCenter->addCab(createCab());
+            break;
+        case 4:
+            printDriverLocation();
+            if(this->isThereConnection){
+                udp->sendData("5");
+            }
+            break;
+      /*  case 6: {
+            this->taxiCenter->connectDriverToTaxi();
+            this->taxiCenter->connectDriverToTrip();
+            this->taxiCenter->moveAllDrivers();
+            break;
+        }*/
+        case 9: { /*TODO change the condition in if statement*/
+           // if(!this->addDrivers){
+               // this->taxiCenter->connectDriverToTaxi();
+            //    this->addDrivers = true;
+          //  } else {
+              //  this->taxiCenter->connectDriverToTrip(this->clock.getTime());
+            char buffer[4096];
+            this->udp->reciveData(buffer, sizeof(buffer));
+            this->clock.increaseTimeByOne();
+            string path;
+            do{
+                path = this->taxiCenter->serializePath(this->clock.getTime());
+                if(path.compare("NULL")!=0) {
+                    this->udp->sendData("2");
+                    this->udp->sendData(path);
+                 //   break;
+                }
+            } while(path.compare("NULL")!=0);
+
+            if(path.compare("NULL")==0){
+                udp->sendData("5");
+            }
+            bool move = this->taxiCenter->moveOneStep(this->clock.getTime());
+            if(move) {
+                udp->sendData("9");
+            } else {
+                udp->sendData("5");
+            }
+          //  }
+
+            break;
+
+        }
+    }
+    return this->task;
 }

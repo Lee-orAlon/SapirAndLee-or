@@ -65,6 +65,7 @@ void Driver::enterPath(char *path, char *end) {
     ia >>listElm;
     this->path=listElm;
     this->setInTrip(true);
+    //boost::serialization::access::destroy(listElm);
 
 }
 
