@@ -195,6 +195,12 @@ public:
     /**TODO*/
     void connectToTaxiCenter();
     bool operator==(const Driver &other)const;
+
+    void setPath(std::list<Element *> *p);
+
+    void setCab(Cab *cab);
+
+    void doNextMove();
 };
 
 #endif //EX2_ADVANCEDPROGRAMMING1_DRIVER_H

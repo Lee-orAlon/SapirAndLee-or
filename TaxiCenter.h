@@ -36,18 +36,18 @@ private:
     Grid *grid;
     BFS *bfs;
 
+    //This function is not relevant for this exercise.
     void setRateOfDriver(Driver *driver, std::list<Passenger *> *listPassenger);
+
     friend class boost::serialization::access;
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int version)
-    {
+    void serialize(Archive &ar, const unsigned int version) {
         ar & grid;
         ar & bfs;
     }
-//Driver::Driver(int id, int age, char status, Cab *cab, Value *currentLocation, int experience)
 
 public:
-/**
+    /**
      * constructor.
      * @param grid the Map of the world which the taxi center lives in.
      * @param bfs a variable of type BFS algorithm.
@@ -114,12 +114,6 @@ public:
     void deleteTripFromList(Trip *t);
 
     /**
-     * moveAllDrivers- when this function is called, all the drivers that are in trip will move
-     * accordanly.
-     */
-    void moveAllDrivers();
-
-    /**
      * numberOfDriver.
      * @return the number of Drivers that are in this Taxi Center.
      */
@@ -135,7 +129,7 @@ public:
      * addDriver.
      * @param driver the Driver which the user wants to add to this Taxi Center.
      */
-    void addDriver(Driver* driver);
+    void addDriver(Driver *driver);
 
     /**
      * addCab.
@@ -163,16 +157,21 @@ public:
      */
     Value *getDriverLocation(int driverID);
 
-    /*
-     * this function give to all driver taxi acoording to driver id
+    /**
+     * this function give to all driver taxi according to driver id
+     * @param driver the begining of the buffer which contains the driver's information..
+     * @param end the end of the buffer which contains the driver's information.
+     * @return the serialized cab of the driver.
      */
     string connectDriverToTaxi(char *driver, char *end);
 
-    /*
+    /**
      * moveOneStep- move all the drivers that are in trip one step (according to type of the
      * driver's cab).
+     * @param currentTime the current time of this world.
+     * @return true is a driver moved. Else, returns false.
      */
-    void moveOneStep(int currentTime);
+    bool moveOneStep(int currentTime);
 
     /**
      * numberOfTrip.
@@ -180,16 +179,18 @@ public:
      */
     int numberOfTrip();
 
-/*TODO i've changed this function*/
     /**
      * connectDriverToTrip- give driver a trip according to its location.
      * @param currentTime
      */
-    Trip* connectDriverToTrip(int currentTime);
+    Trip *connectDriverToTrip(int currentTime);
 
+    /**
+     * serializePath.
+     * @param currentTime the current time of the world.
+     * @return serilalized path of the trip of the driver.
+     */
     string serializePath(int currentTime);
-
-    std::list<Element*>*findPath(Driver* d);
 };
 
 #endif //EX2_TEXICENTER_H

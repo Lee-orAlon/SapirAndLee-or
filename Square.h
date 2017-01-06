@@ -52,6 +52,7 @@ private:
         ar&myLocation;
         ar&fatherDirection;
         ar& boost::serialization::base_object<Element>(*this);
+//        boost::serialization::access::destroy;
     }
 public:
     /**

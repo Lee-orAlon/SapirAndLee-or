@@ -64,6 +64,8 @@ void Driver::enterPath(char *path, char *end) {
     boost::archive::binary_iarchive ia(s2);
     ia >>listElm;
     this->path=listElm;
+    this->setInTrip(true);
+
 }
 
 void Driver::setTrip(Trip *givenTrip) {
@@ -188,7 +190,35 @@ bool Driver::operator==(const Driver &other) const {
     return false;
 }
 
+void Driver::setPath(std::list<Element *> *p) {
+    this->path = p;
+}
 
+void Driver::setCab(Cab *cab) {
+    this->taxi = cab;
+}
+
+void Driver::doNextMove() {
+    int numOfSteps;
+    if (isThereNextStep()) {
+        numOfSteps=this->taxi->move();
+        for(int i=0; i<numOfSteps; i++) {
+            if (isThereNextStep()) {
+                this->location = (*this->path->begin())->getMyLocation();
+                this->path->remove(*this->path->begin());
+            } else {
+                delete(this->path);
+                this->path=NULL;
+                this->setInTrip(false);
+                break;
+            }
+        }
+    } else {
+        delete(this->path);
+        this->path = NULL;
+        this->setInTrip(false);
+    }
+}
 /**td::ostream& operator<< (std::ostream &os,Driver &driver) {
     os  << driver.id << driver.age << driver.status << driver.experience<<driver.average
             <<driver.taxiID;
