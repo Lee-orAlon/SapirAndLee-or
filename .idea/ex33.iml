@@ -43,7 +43,6 @@
       <sourceFolder url="file://$MODULE_DIR$/Regular.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Server.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Regular.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Socket.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Client.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Udp.cpp" isTestSource="false" />

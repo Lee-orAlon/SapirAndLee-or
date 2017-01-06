@@ -17,7 +17,11 @@
 Udp::Udp(bool isServers, int port_num, string ip) {
     this->port_number = port_num;
     this->isServer = isServers;
-    this->ip_address = ip;
+    if(ip.compare("localhost")==0){
+        this->ip_address = "127.0.0.1";
+    } else {
+        this->ip_address = ip;
+    }
 }
 
 /***********************************************************************
