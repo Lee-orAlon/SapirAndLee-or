@@ -12,20 +12,22 @@ public:
      * Constructor.
      */
     Clock();
+
     /**
      * increaseTimeByOne- increase the value of time by 1.
      */
     void increaseTimeByOne();
+
     /**
      * getTime.
      * @return time.
      */
     int getTime();
+
     /**
      * Destructor.
      */
     ~Clock();
 };
-
 
 #endif //EX33_CLOCK_H

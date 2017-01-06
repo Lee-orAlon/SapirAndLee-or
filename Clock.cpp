@@ -1,6 +1,7 @@
 #include "Clock.h"
+
 Clock::Clock() {
-    this->time=0;
+    this->time = 0;
 }
 
 void Clock::increaseTimeByOne() {
