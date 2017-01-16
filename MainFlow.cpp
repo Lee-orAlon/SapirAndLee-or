@@ -192,7 +192,7 @@ void MainFlow::addThreadsAndClients() {
     for (int i = 0; i < numOfDrivers; i++) {
         pthread_t thread;
         int socket = this->tcp->acceptOneClient();
-        this->tcp->reciveData(buffer, sizeof(buffer));
+        this->tcp->receiveData(buffer, sizeof(buffer), socket);
         int ID = this->taxiCenter->getIDFromSerialization(buffer);
         clientInfo *info = new clientInfo;
         info->clientSocket = socket;
