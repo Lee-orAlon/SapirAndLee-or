@@ -191,7 +191,7 @@ public:
     string serializePath(int currentTime);
 
     /*TODO*/
-    int getIDFromSerialization(char *driver);
+    int getIDFromSerialization(char *driver, char *end);
 };
 
 #endif //EX2_TEXICENTER_H

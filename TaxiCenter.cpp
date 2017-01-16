@@ -257,9 +257,9 @@ string TaxiCenter::connectDriverToTaxi(char *driver, char *end) {
     return "NULL";
 }
 
-int TaxiCenter::getIDFromSerialization(char *driver) {
+int TaxiCenter::getIDFromSerialization(char *driver, char *end) {
     Driver *d;
-    boost::iostreams::basic_array_source<char> device(driver, end);
+    boost::iostreams::basic_array_source<char> device(driver,end);
     boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
     boost::archive::binary_iarchive ia(s2);
     ia >> d;

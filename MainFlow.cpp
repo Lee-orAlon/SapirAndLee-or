@@ -2,7 +2,7 @@
 #include "Regular.h"
 #include "Luxury.h"
 
-void MainFlow::switchCase(void *information) {
+void* MainFlow::switchCase(void *information) {
     clientInfo *info = (clientInfo*)information;
     int task;
     do {
@@ -193,7 +193,7 @@ void MainFlow::addThreadsAndClients() {
         pthread_t thread;
         int socket = this->tcp->acceptOneClient();
         this->tcp->receiveData(buffer, sizeof(buffer), socket);
-        int ID = this->taxiCenter->getIDFromSerialization(buffer);
+        int ID = this->taxiCenter->getIDFromSerialization(buffer,buffer + 4095);
         clientInfo *info = new clientInfo;
         info->clientSocket = socket;
         info->clientID = ID;

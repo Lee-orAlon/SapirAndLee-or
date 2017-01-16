@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
     //project name,port number,ip address -three parameters
     if (argc == 3) {
         Driver *driver;
-        Tcp *tcp = new Tcp(false, atoi(argv[1]));
+        Tcp *tcp = new Tcp(false, atoi(argv[2]));
         if (tcp->initialize() != CORRECT) {
             perror("error creating socket");
         }
@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
         tcp->sendData(driverStr, descriptor);
         char buffer[4096];
         //receive the serialized cab from server.
-        tcp->reciveData(buffer, sizeof(buffer));
+        tcp->receiveData(buffer, sizeof(buffer),descriptor);
         //add the cab to driver.
         Cab *cab = driver->deserializeCab(buffer, buffer + 4095);
         driver->setCab(cab);
@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
         bool socketOpen = true;
         tcp->sendData("send me data", descriptor);
         while (socketOpen) {
-            tcp->reciveData(buffer, sizeof(buffer));
+            tcp->receiveData(buffer, sizeof(buffer),descriptor);
             int command = atoi(buffer);
             switch (command) {
                 case 0: {//if server sent "0" then communication end- close socket.

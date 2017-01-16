@@ -71,7 +71,7 @@ private:
     void addThreadsAndClients();
 
     /*TODO*/
-    static void switchCase(void *information);
+    static void* switchCase(void *information);
 };
 
 #endif //EX3_MAINFLOW_H

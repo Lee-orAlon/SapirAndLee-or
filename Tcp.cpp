@@ -27,7 +27,6 @@ Tcp::Tcp(bool isServers, int port_num) {
     this->descriptorCommunicateClient = 0;
     this->port_number = port_num;
     this->isServer = isServers;
-
 }
 
 /***********************************************************************
@@ -84,13 +83,24 @@ int Tcp::initialize() {
         }
         //if client
     } else {
+        struct sockaddr_in sin;                                          // ipv4 socket address structure
+        memset(&sin, 0, sizeof(sin));
+        sin.sin_family = AF_INET;                                        // IPv4 version
+        sin.sin_addr.s_addr = inet_addr((this->ip_address).c_str());     // get IP address from DEFINE IP number
+        sin.sin_port = htons(this->port_number);                         // pass port number
+        if (connect(this->socketDescriptor,
+                    (struct sockaddr *) &sin, sizeof(sin)) < 0) {
+            //return an error represent error at this method
+            perror("ERROR_CONNECT - in initialize()\n");
+            return 0;
+
+
         struct sockaddr_in sin;
         memset(&sin, 0, sizeof(sin));
         sin.sin_family = AF_INET;
         sin.sin_addr.s_addr = inet_addr((this->ip_address).c_str());
         sin.sin_port = htons(this->port_number);
-        if (connect(this->socketDescriptor,
-                    (struct sockaddr *) &sin, sizeof(sin)) < 0) {
+        if (connect(this->socketDescriptor, (struct sockaddr *) &sin, sizeof(sin)) < 0) {
             //return an error represent error at this method
             return ERROR_CONNECT;
         }
@@ -98,7 +108,6 @@ int Tcp::initialize() {
     //return correct if there were no problem
     return CORRECT;
 }
-
 
 /***********************************************************************
 * function name: sendData											   *
