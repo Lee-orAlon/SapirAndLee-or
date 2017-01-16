@@ -212,3 +212,21 @@ Cab *Driver::deserializeCab(char *cab, char *end) {
         return newCab;
     }
 }
+
+
+/*TODO*/
+void Driver::setLocation(Value *loc) {
+    this->location = loc;
+}
+
+/*TODO*/
+string Driver::serializeMyLocation() {
+    std::string serial_str;
+    boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+    boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
+    boost::archive::binary_oarchive oa(s);
+    oa << this->location;
+    s.flush();
+
+    return serial_str;
+}

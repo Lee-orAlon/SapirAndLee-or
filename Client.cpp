@@ -1,5 +1,5 @@
 #include "Client.h"
-#include "Udp.h"
+#include "Tcp.h"
 #include "Driver.h"
 
 using namespace std;
@@ -20,25 +20,26 @@ int main(int argc, char **argv) {
     //project name,port number,ip address -three parameters
     if (argc == 3) {
         Driver *driver;
-        Udp *udp = new Udp(false, atoi(argv[2]), argv[1]);
-        if (udp->initialize() != CORRECT) {
+        Tcp *tcp = new Tcp(false, atoi(argv[1]));
+        if (tcp->initialize() != CORRECT) {
             perror("error creating socket");
         }
         driver = createDriver();
         string driverStr = serializeDriver(driver);
         //send the serialization of the driver to the server.
-        udp->sendData(driverStr);
+        int descriptor = tcp->acceptOneClient();
+        tcp->sendData(driverStr, descriptor);
         char buffer[4096];
         //receive the serialized cab from server.
-        udp->reciveData(buffer, sizeof(buffer));
+        tcp->reciveData(buffer, sizeof(buffer));
         //add the cab to driver.
         Cab *cab = driver->deserializeCab(buffer, buffer + 4095);
         driver->setCab(cab);
 
         bool socketOpen = true;
-        udp->sendData("send me data");
+        tcp->sendData("send me data", descriptor);
         while (socketOpen) {
-            udp->reciveData(buffer, sizeof(buffer));
+            tcp->reciveData(buffer, sizeof(buffer));
             int command = atoi(buffer);
             switch (command) {
                 case 0: {//if server sent "0" then communication end- close socket.
@@ -46,20 +47,20 @@ int main(int argc, char **argv) {
                     break;
                 }
                 case 2: {//if server sent "2" than add path to driver.
-                    udp->reciveData(buffer, sizeof(buffer));
+                    //tcp->reciveData(buffer, sizeof(buffer));
                     driver->enterPath(buffer, buffer + 4095);
-                    udp->sendData("ok");
+                    //tcp->sendData("ok", descriptor);
                     break;
                 }
                 case 9: {//if server sent "9" - move.
                     if (driver->isInTrip()) {
                         driver->doNextMove();
                     }
-                    udp->sendData("ok");
+                    tcp->sendData(driver->serializeMyLocation(), descriptor);
                     break;
                 }
                 default: {
-                    udp->sendData("send me data");
+                    //tcp->sendData("send me data", descriptor);
                 }
             }
         }

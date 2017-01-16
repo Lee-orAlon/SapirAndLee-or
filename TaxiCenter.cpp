@@ -53,11 +53,14 @@ void TaxiCenter::createTrip(Trip *t) {
 
 Trip *TaxiCenter::connectDriverToTrip(int currntTime) {
     std::list<Trip *>::iterator it = this->trip->begin();
+
     for (std::list<Trip *>::iterator it = this->trip->begin();
          it != this->trip->end(); it++) {
         if (((*it)->getStartTime() == currntTime) && ((*it)->doesTripHasDriver() == false)) {
             Driver *d = this->findClosestDriver((*it)->getStart());
             if (d != NULL) {
+                /* TODO*/
+              //  pthread_mutex_lock(&this->connection_locker);
                 (*it)->setTripHasDriverToBeTrue();
                 d->setTrip(*it);
 
@@ -66,6 +69,8 @@ Trip *TaxiCenter::connectDriverToTrip(int currntTime) {
                 pathD->remove(*pathD->begin());
                 d->setPath(pathD);
                 (*it)->setTripHasDriverToBeTrue();
+                /* TODO*/
+               // pthread_mutex_unlock(&this->connection_locker);
                 return (*it);
             }
         }
@@ -74,6 +79,7 @@ Trip *TaxiCenter::connectDriverToTrip(int currntTime) {
 }
 
 string TaxiCenter::serializePath(int currentTime) {
+    pthread_mutex_lock(&this->connection_locker);
     Trip *trip = this->connectDriverToTrip(currentTime);
     if (trip != NULL) {
         std::list<Element *> *path = this->createPath(trip->getStart(), trip->getEnd());
@@ -85,8 +91,10 @@ string TaxiCenter::serializePath(int currentTime) {
         oa << path;
         s.flush();
         delete (path);
+        pthread_mutex_unlock(&this->connection_locker);
         return serial_str;
     }
+    pthread_mutex_unlock(&this->connection_locker);
     return "NULL";
 }
 
@@ -146,16 +154,18 @@ void TaxiCenter::deleteTripFromList(Trip *t) {
     }
 }
 
-bool TaxiCenter::moveOneStep(int currentTime) {
+bool TaxiCenter::moveOneStep(int currentTime, int ID) {
     bool someoneMoved = false;
     for (std::list<Driver *>::iterator it = this->drivers->begin();
          it != this->drivers->end(); it++) {
-        if ((*it)->isInTrip() && ((*it)->getCurrentTrip()->getStartTime() < currentTime)) {
-            (*it)->move();
-            someoneMoved = true;
-            if (!(*it)->isInTrip()) {
-                //  setRateOfDriver((*it), (*it)->getCurrentTrip().listPassenger());
-                this->deleteTripFromList((*it)->getCurrentTrip());
+        if((*it)->getID() == ID) {
+            if ((*it)->isInTrip() && ((*it)->getCurrentTrip()->getStartTime() < currentTime)) {
+                (*it)->move();
+                someoneMoved = true;
+                if (!(*it)->isInTrip()) {
+                    //  setRateOfDriver((*it), (*it)->getCurrentTrip().listPassenger());
+                    this->deleteTripFromList((*it)->getCurrentTrip());
+                }
             }
         }
     }
@@ -223,17 +233,17 @@ void TaxiCenter::addDriver(Driver *driver) {
 }
 
 string TaxiCenter::connectDriverToTaxi(char *driver, char *end) {
-    Driver *driverD;
+    Driver *d;
     boost::iostreams::basic_array_source<char> device(driver, end);
     boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
     boost::archive::binary_iarchive ia(s2);
-    ia >> driverD;
+    ia >> d;
 
-    this->addDriver(driverD);
+    this->addDriver(d);
     for (std::list<Cab *>::iterator cab = this->cabs->begin();
          cab != this->cabs->end(); cab++) {
-        if (driverD->getDriverCabID() == (*cab)->getID()) {
-            driverD->setCab(*cab);
+        if (d->getDriverCabID() == (*cab)->getID()) {
+            d->setCab(*cab);
             std::string serial_str;
             boost::iostreams::back_insert_device<std::string> inserter(serial_str);
             boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(
@@ -245,4 +255,14 @@ string TaxiCenter::connectDriverToTaxi(char *driver, char *end) {
         }
     }
     return "NULL";
+}
+
+int TaxiCenter::getIDFromSerialization(char *driver) {
+    Driver *d;
+    boost::iostreams::basic_array_source<char> device(driver, end);
+    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
+    boost::archive::binary_iarchive ia(s2);
+    ia >> d;
+
+    return d->getID();
 }

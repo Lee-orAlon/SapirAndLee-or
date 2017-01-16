@@ -216,6 +216,12 @@ public:
      * @param end the end of the buffer which contains the cab's information.
      */
     Cab *deserializeCab(char *cab, char *end);
+
+    /*TODO*/
+    void setLocation(Value *loc);
+
+    /*TODO*/
+    string serializeMyLocation();
 };
 
 #endif //EX2_ADVANCEDPROGRAMMING1_DRIVER_H

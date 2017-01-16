@@ -2,69 +2,63 @@
 #include "Regular.h"
 #include "Luxury.h"
 
-MainFlow::MainFlow(int port) {
-    this->map = createMap();
-    this->taxiCenter = new TaxiCenter(map->getGrid(), new BFS(map));
-    this->clock = Clock();
-    this->udp = new Udp(true,port);
-    this-> isThereConnection = false;
-
-    do{
-        cin >> this->task;
+void MainFlow::switchCase(void *information) {
+    clientInfo *info = (clientInfo*)information;
+    int task;
+    do {
+        cin >> task;
         cin.ignore();
-        switch (this->task) {
+        switch (task) {
             case 1: {
-                int numOfDrivers;
-                cin>>numOfDrivers;
-                this->udp->initialize();
-                char buffer[4096];
-                this->udp->reciveData(buffer, sizeof(buffer));
-                string dataTaxi = this->taxiCenter->connectDriverToTaxi(buffer, buffer+4095);
-                // send serialized cab to the driver.
-                this->udp->sendData(dataTaxi);
-                //set that the socket is open (there is a connection.
-                this->isThereConnection = true;
+                info->mainFlow->addThreadsAndClients();
                 break;
-            } case 2: {
-                this->taxiCenter->createTrip(createTrip());
-                if(this->isThereConnection){
-                    udp->sendData("5");
-                }
+            }
+            case 2: {
+                info->center->createTrip(info->mainFlow->createTrip());
+                /*if(this->isThereConnection){
+                    tcp->sendData("5");
+                }*/
                 break;
             }
             case 3: {
-                this->taxiCenter->addCab(createCab());
+                info->center->addCab(info->mainFlow->createCab());
                 break;
             }
             case 4: {
-                printDriverLocation();
+                info->mainFlow->printDriverLocation();
                 //if there is a connection between server to client, tell client to do nothing.
-                if (this->isThereConnection) {
-                    udp->sendData("5"); //
+                /*if (this->isThereConnection) {
+                    tcp->sendData("5"); //
                 }
+                 */
                 break;
             }
             case 9: {
                 char buffer[4096];
-                this->udp->reciveData(buffer, sizeof(buffer));
-                this->clock.increaseTimeByOne();
+                //this->tcp->reciveData(buffer, sizeof(buffer));
+                info->mainFlow->clock.increaseTimeByOne();
                 string path;
-                bool move = this->taxiCenter->moveOneStep(this->clock.getTime());
-                if(move) {
-                    udp->sendData("9"); //tell client to move.
-                } else {
-                    udp->sendData("5"); //tell client to do nothing.
-                }
-                do{
-                    path = this->taxiCenter->serializePath(this->clock.getTime());
-                    if(path.compare("NULL")!=0) {
-                        this->udp->sendData("2");//tell client to deserialize the given path.
-                        this->udp->sendData(path);
+                for (std::list<clientInfo *>::iterator client = info->mainFlow->clients->begin();
+                     client != info->mainFlow->clients->end(); client++) {
+                    bool move = info->center->moveOneStep(info->mainFlow->clock.getTime(),
+                                                              (*client)->clientID);
+                    if (move) {
+                        //tcp->sendData("9", (*client)->clientSocket); //tell client to move.
+                    } else {
+                        //tcp->sendData("5"); //tell client to do nothing.
                     }
-                } while(path.compare("NULL")!=0);
+                    do {
+                        path = info->center->serializePath(info->mainFlow->clock.getTime());
+                        if (path.compare("NULL") != 0) {
+                            //tell client to deserialize the given path.
+                            //this->tcp->sendData("2", (*client)->clientSocket);
+                            //this->tcp->sendData(path, (*client)->clientSocket);
+                        }
+                    } while (path.compare("NULL") != 0);
 
-                if(path.compare("NULL")==0){
-                    udp->sendData("5"); //tell client to do nothing.
+                    if (path.compare("NULL") == 0) {
+                        //tcp->sendData("5", (*client)->clientSocket); //tell client to do nothing.
+                    }
                 }
 
                 break;
@@ -73,11 +67,22 @@ MainFlow::MainFlow(int port) {
                 break;
             }
         }
-    } while (this->task!=7);
+    } while (task != 7);
+}
+
+MainFlow::MainFlow(int port) {
+    this->map = createMap();
+    this->taxiCenter = new TaxiCenter(map->getGrid(), new BFS(map));
+    this->clock = Clock();
+    this->tcp = new Tcp(true, port);
+    this->isThereConnection = false;
+    this->clients = new std::list<clientInfo *>;
+
+
 
     //keep sending a close message to client until it arrives.
-    while (udp->sendData("0")!=CORRECT){}
-    delete (udp);
+    //while (tcp->sendData("0") != CORRECT) {}
+    delete (tcp);
 }
 
 Map *MainFlow::createMap() {
@@ -162,7 +167,8 @@ Trip *MainFlow::createTrip() {
     cin >> dummy;
     cin >> time;
     cin.ignore();
-    return new Trip(id, new Point(xStart, yStart), new Point(xEnd, yEnd), numOfPassengers, tariff,time);
+    return new Trip(id, new Point(xStart, yStart), new Point(xEnd, yEnd), numOfPassengers, tariff,
+                    time);
 }
 
 void MainFlow::printDriverLocation() {
@@ -175,4 +181,35 @@ void MainFlow::printDriverLocation() {
 MainFlow::~MainFlow() {
     delete (this->taxiCenter);
     delete (this->map);
+}
+
+
+void MainFlow::addThreadsAndClients() {
+    int numOfDrivers;
+    cin >> numOfDrivers;
+    this->tcp->initialize();
+    char buffer[4096];
+    for (int i = 0; i < numOfDrivers; i++) {
+        pthread_t thread;
+        int socket = this->tcp->acceptOneClient();
+        this->tcp->reciveData(buffer, sizeof(buffer));
+        int ID = this->taxiCenter->getIDFromSerialization(buffer);
+        clientInfo *info = new clientInfo;
+        info->clientSocket = socket;
+        info->clientID = ID;
+        info->mainFlow = this;
+        info->center = this->taxiCenter;
+        this->clients->push_back(info);
+        string dataTaxi = this->taxiCenter->connectDriverToTaxi(buffer, buffer + 4095);
+        // send serialized cab to the driver.
+        this->tcp->sendData(dataTaxi, socket);
+        int check = pthread_create(&thread, NULL, switchCase, (void*)info);
+        if(!check){
+            pthread_join(thread, NULL);
+        } else {
+            /*TODO exit*/
+        }
+    }
+    //set that the socket is open (there is a connection).
+    this->isThereConnection = true;
 }

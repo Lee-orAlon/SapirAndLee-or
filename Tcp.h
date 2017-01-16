@@ -34,22 +34,27 @@ public:
 	* socket descriptor.												   *
 	***********************************************************************/
 	int initialize();
-	/***********************************************************************
-	* function name: sendData											   *
-	* The Input: string representing the data to send		               *
-	* The output: int number representing the return status		           *
-	* The Function operation: sending the input data to the socket         *
-	* who connect to this socket. 										   *
-	***********************************************************************/
-	int sendData(string data);
-	/***********************************************************************
-	* function name: recive	`											   *
-	* The Input: none										               *
-	* The output: int number representing the return status	               *
-	* The Function operation: getting data from the other socket and print *
-	* the data															   *
-	***********************************************************************/
-	int reciveData(char* buffer, int size);
+    /***********************************************************************
+    * function name: sendData											   *
+    * The Input: string data to send and descriptor Communicate of Client  *
+    *     in server case or any number in Client case.                     *
+    * The output: number of bytes that gets                 	           *
+    * The Function operation: sending the required data, using his length  *
+    * and the socket descriptor or client descriptor.					   *
+    ***********************************************************************/
+	int sendData(string data, int clientDescriptor);
+    /***********************************************************************
+    * function name: receiveData										   *
+    * The Input: buffer to send and is size, and also - descriptor         *
+    *   Communicate Client in server case or any number in client case     *
+    * The output: int number representing the return status	               *
+    * The Function operation: getting data from the other socket to,	   *
+    * enter it to the buffer and print the data							   *
+    ***********************************************************************/
+	int receiveData(char* buffer, int size, int clientDescriptor);
+
+    /*TODO*/
+    int acceptOneClient();
 };
 
 #endif /* TCP_H_ */

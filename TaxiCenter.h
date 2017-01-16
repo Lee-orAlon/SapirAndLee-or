@@ -22,6 +22,7 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/base_object.hpp>
+#include <pthread.h>
 
 using namespace std;
 
@@ -35,7 +36,8 @@ private:
     std::list<Trip *> *trip;
     Grid *grid;
     BFS *bfs;
-
+    /*TODO*/
+    pthread_mutex_t connection_locker;
     //This function is not relevant for this exercise.
     void setRateOfDriver(Driver *driver, std::list<Passenger *> *listPassenger);
 
@@ -166,12 +168,8 @@ public:
      */
     string connectDriverToTaxi(char *driver, char *end);
 
-    /**
-     * moveOneStep
-     * @param currentTime the current time in the world.
-     * @return true if a driver moved. Else, returns false.
-     */
-    bool moveOneStep(int currentTime);
+    /*TODO*/
+    bool moveOneStep(int , int ID);
 
     /**
      * numberOfTrip.
@@ -191,6 +189,9 @@ public:
      * @return the serialized path of the trip.
      */
     string serializePath(int currentTime);
+
+    /*TODO*/
+    int getIDFromSerialization(char *driver);
 };
 
 #endif //EX2_TEXICENTER_H

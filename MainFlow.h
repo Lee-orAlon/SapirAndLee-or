@@ -5,7 +5,9 @@
 #include "Driver.h"
 #include "TaxiCenter.h"
 #include "Clock.h"
-#include "Udp.h"
+#include "Tcp.h"
+#include "Client.h"
+#include <pthread.h>
 
 /*
  * MainFlow class- this class creates a Taxi Center and manage it.
@@ -24,12 +26,19 @@ public:
     ~MainFlow();
 
 private:
+    struct clientInfo{
+        int clientSocket;
+        int clientID;
+        MainFlow *mainFlow;
+        TaxiCenter *center;
+    };
     bool isThereConnection;
     int task;
-    Udp *udp;
+    Tcp *tcp;
     Clock clock;
     TaxiCenter *taxiCenter;
     Map *map;
+    std::list<clientInfo *> *clients;
 
     /**
      * createMap.
@@ -56,6 +65,13 @@ private:
      * printDriverLocation- print a driver's location (by the driver's ID).
      */
     void printDriverLocation();
+
+
+    /*TODO*/
+    void addThreadsAndClients();
+
+    /*TODO*/
+    static void switchCase(void *information);
 };
 
 #endif //EX3_MAINFLOW_H
