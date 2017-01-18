@@ -11,6 +11,7 @@
 class Tcp: public Socket {
 private:
 	int descriptorCommunicateClient;
+    bool isServer;
 public:
 	/***********************************************************************
 	* function name: Tcp												   *

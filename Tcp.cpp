@@ -63,7 +63,7 @@ int Tcp::initialize() {
         sin.sin_port = htons(this->port_number);
         //bind
         if (::bind(this->socketDescriptor,
-                 (struct sockaddr *) &sin, sizeof(sin)) < 0) {
+                   (struct sockaddr *) &sin, sizeof(sin)) < 0) {
             //return an error represent error at this method
             return ERROR_BIND;
         }
@@ -86,7 +86,8 @@ int Tcp::initialize() {
         struct sockaddr_in sin;                                          // ipv4 socket address structure
         memset(&sin, 0, sizeof(sin));
         sin.sin_family = AF_INET;                                        // IPv4 version
-        sin.sin_addr.s_addr = inet_addr((this->ip_address).c_str());     // get IP address from DEFINE IP number
+        sin.sin_addr.s_addr = inet_addr(
+                (this->ip_address).c_str());     // get IP address from DEFINE IP number
         sin.sin_port = htons(this->port_number);                         // pass port number
         if (connect(this->socketDescriptor,
                     (struct sockaddr *) &sin, sizeof(sin)) < 0) {
@@ -95,18 +96,19 @@ int Tcp::initialize() {
             return 0;
 
 
-        struct sockaddr_in sin;
-        memset(&sin, 0, sizeof(sin));
-        sin.sin_family = AF_INET;
-        sin.sin_addr.s_addr = inet_addr((this->ip_address).c_str());
-        sin.sin_port = htons(this->port_number);
-        if (connect(this->socketDescriptor, (struct sockaddr *) &sin, sizeof(sin)) < 0) {
-            //return an error represent error at this method
-            return ERROR_CONNECT;
+            struct sockaddr_in sin;
+            memset(&sin, 0, sizeof(sin));
+            sin.sin_family = AF_INET;
+            sin.sin_addr.s_addr = inet_addr((this->ip_address).c_str());
+            sin.sin_port = htons(this->port_number);
+            if (connect(this->socketDescriptor, (struct sockaddr *) &sin, sizeof(sin)) < 0) {
+                //return an error represent error at this method
+                return ERROR_CONNECT;
+            }
         }
+        //return correct if there were no problem
+        return CORRECT;
     }
-    //return correct if there were no problem
-    return CORRECT;
 }
 
 /***********************************************************************
@@ -120,7 +122,8 @@ int Tcp::initialize() {
 int Tcp::sendData(string data, int clientDescriptor) {
     size_t data_len = data.length();
     const char *datas = data.c_str();
-    ssize_t sent_bytes = send(this->isServer ? clientDescriptor : this->socketDescriptor, datas,
+    ssize_t sent_bytes = send(this->isServer ? clientDescriptor : this->socketDescriptor,
+                              datas,
                               data_len, 0);
     if (sent_bytes < 0) {
         string host = "";
@@ -146,7 +149,8 @@ int Tcp::sendData(string data, int clientDescriptor) {
 * enter it to the buffer and print the data							   *
 ***********************************************************************/
 int Tcp::receiveData(char *buffer, int size, int clientDescriptor) {
-    ssize_t read_bytes = recv(this->isServer ? clientDescriptor : this->socketDescriptor, buffer,
+    ssize_t read_bytes = recv(this->isServer ? clientDescriptor : this->socketDescriptor,
+                              buffer,
                               size, 0);
     //checking the errors
     if (read_bytes <= 0) {

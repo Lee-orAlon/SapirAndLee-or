@@ -1,6 +1,7 @@
 #include "MainFlow.h"
 #include "Regular.h"
 #include "Luxury.h"
+#include <boost/log/trivial.hpp>
 
 void* MainFlow::switchCase(void *information) {
     clientInfo *info = (clientInfo*)information;
@@ -10,10 +11,12 @@ void* MainFlow::switchCase(void *information) {
         cin.ignore();
         switch (task) {
             case 1: {
+                BOOST_LOG_TRIVIAL(debug) << "case 1- add clients" << endl;
                 info->mainFlow->addThreadsAndClients();
                 break;
             }
             case 2: {
+                BOOST_LOG_TRIVIAL(debug) << "case 2- add trip" << endl;
                 info->center->createTrip(info->mainFlow->createTrip());
                 /*if(this->isThereConnection){
                     tcp->sendData("5");
@@ -21,10 +24,12 @@ void* MainFlow::switchCase(void *information) {
                 break;
             }
             case 3: {
+                BOOST_LOG_TRIVIAL(debug) << "case 3- add cab" << endl;
                 info->center->addCab(info->mainFlow->createCab());
                 break;
             }
             case 4: {
+                BOOST_LOG_TRIVIAL(debug) << "case 4- print driver's location" << endl;
                 info->mainFlow->printDriverLocation();
                 //if there is a connection between server to client, tell client to do nothing.
                 /*if (this->isThereConnection) {
@@ -34,6 +39,7 @@ void* MainFlow::switchCase(void *information) {
                 break;
             }
             case 9: {
+                BOOST_LOG_TRIVIAL(debug) << "case 9" << endl;
                 char buffer[4096];
                 //this->tcp->reciveData(buffer, sizeof(buffer));
                 info->mainFlow->clock.increaseTimeByOne();
@@ -77,8 +83,8 @@ MainFlow::MainFlow(int port) {
     this->tcp = new Tcp(true, port);
     this->isThereConnection = false;
     this->clients = new std::list<clientInfo *>;
-
-
+    clientInfo *ci = {};
+    this->switchCase(ci);
 
     //keep sending a close message to client until it arrives.
     //while (tcp->sendData("0") != CORRECT) {}

@@ -5,9 +5,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
 
 
 set(BOOST_ROOT CACHE PATH "/usr/include/boost/")
-find_package(Boost 1.58.0 COMPONENTS serialization system)
+find_package(Boost 1.58.0 COMPONENTS serialization system log)
 include_directories(${Boost_INCLUDE_DIR})
-
+add_definitions(-DBOOST_ALL_DYN_LINK)
 
 set(SOURCE_FILES_CLIENT BFS.cpp BFS.h Cab.cpp Cab.h Driver.cpp Driver.h Element.cpp
         Element.h Grid.cpp Grid.h Luxury.cpp Luxury.h MainFlow.cpp MainFlow.h Map.cpp Map.h
