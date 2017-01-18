@@ -71,7 +71,7 @@ private:
     void addThreadsAndClients();
 
     /*TODO*/
-    static void case9(void *information);
+    static void *case9(void *information);
 
     /*TODO*/
     void* switchCase();

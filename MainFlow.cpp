@@ -195,7 +195,7 @@ void MainFlow::addThreadsAndClients() {
 
 
 /*TODO*/
-void MainFlow::case9(void *information) {
+void *MainFlow::case9(void *information) {
     clientInfo *info = (clientInfo*)information;
     BOOST_LOG_TRIVIAL(debug) << "case 9" << endl;
     char buffer[4096];
