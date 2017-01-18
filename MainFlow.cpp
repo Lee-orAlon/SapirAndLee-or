@@ -3,8 +3,7 @@
 #include "Luxury.h"
 #include <boost/log/trivial.hpp>
 
-void* MainFlow::switchCase(void *information) {
-    clientInfo *info = (clientInfo*)information;
+void* MainFlow::switchCase() {
     int task;
     do {
         cin >> task;
@@ -12,12 +11,12 @@ void* MainFlow::switchCase(void *information) {
         switch (task) {
             case 1: {
                 BOOST_LOG_TRIVIAL(debug) << "case 1- add clients" << endl;
-                info->mainFlow->addThreadsAndClients();
+                addThreadsAndClients();
                 break;
             }
             case 2: {
                 BOOST_LOG_TRIVIAL(debug) << "case 2- add trip" << endl;
-                info->center->createTrip(info->mainFlow->createTrip());
+                this->taxiCenter->createTrip(createTrip());
                 /*if(this->isThereConnection){
                     tcp->sendData("5");
                 }*/
@@ -25,12 +24,12 @@ void* MainFlow::switchCase(void *information) {
             }
             case 3: {
                 BOOST_LOG_TRIVIAL(debug) << "case 3- add cab" << endl;
-                info->center->addCab(info->mainFlow->createCab());
+                this->taxiCenter->addCab(createCab());
                 break;
             }
             case 4: {
                 BOOST_LOG_TRIVIAL(debug) << "case 4- print driver's location" << endl;
-                info->mainFlow->printDriverLocation();
+                printDriverLocation();
                 //if there is a connection between server to client, tell client to do nothing.
                 /*if (this->isThereConnection) {
                     tcp->sendData("5"); //
@@ -39,33 +38,7 @@ void* MainFlow::switchCase(void *information) {
                 break;
             }
             case 9: {
-                BOOST_LOG_TRIVIAL(debug) << "case 9" << endl;
-                char buffer[4096];
-                //this->tcp->reciveData(buffer, sizeof(buffer));
-                info->mainFlow->clock.increaseTimeByOne();
-                string path;
-                for (std::list<clientInfo *>::iterator client = info->mainFlow->clients->begin();
-                     client != info->mainFlow->clients->end(); client++) {
-                    bool move = info->center->moveOneStep(info->mainFlow->clock.getTime(),
-                                                              (*client)->clientID);
-                    if (move) {
-                        //tcp->sendData("9", (*client)->clientSocket); //tell client to move.
-                    } else {
-                        //tcp->sendData("5"); //tell client to do nothing.
-                    }
-                    do {
-                        path = info->center->serializePath(info->mainFlow->clock.getTime());
-                        if (path.compare("NULL") != 0) {
-                            //tell client to deserialize the given path.
-                            //this->tcp->sendData("2", (*client)->clientSocket);
-                            //this->tcp->sendData(path, (*client)->clientSocket);
-                        }
-                    } while (path.compare("NULL") != 0);
-
-                    if (path.compare("NULL") == 0) {
-                        //tcp->sendData("5", (*client)->clientSocket); //tell client to do nothing.
-                    }
-                }
+                //case9()
 
                 break;
             }
@@ -83,8 +56,8 @@ MainFlow::MainFlow(int port) {
     this->tcp = new Tcp(true, port);
     this->isThereConnection = false;
     this->clients = new std::list<clientInfo *>;
-    clientInfo *ci = {};
-    this->switchCase(ci);
+
+    this->switchCase();
 
     //keep sending a close message to client until it arrives.
     //while (tcp->sendData("0") != CORRECT) {}
@@ -209,7 +182,7 @@ void MainFlow::addThreadsAndClients() {
         string dataTaxi = this->taxiCenter->connectDriverToTaxi(buffer, buffer + 4095);
         // send serialized cab to the driver.
         this->tcp->sendData(dataTaxi, socket);
-        int check = pthread_create(&thread, NULL, switchCase, (void*)info);
+        int check = pthread_create(&thread, NULL, case9, (void*)info);
         if(!check){
             pthread_join(thread, NULL);
         } else {
@@ -218,4 +191,37 @@ void MainFlow::addThreadsAndClients() {
     }
     //set that the socket is open (there is a connection).
     this->isThereConnection = true;
+}
+
+
+/*TODO*/
+void MainFlow::case9(void *information) {
+    clientInfo *info = (clientInfo*)information;
+    BOOST_LOG_TRIVIAL(debug) << "case 9" << endl;
+    char buffer[4096];
+    //this->tcp->reciveData(buffer, sizeof(buffer));
+    info->mainFlow->clock.increaseTimeByOne();
+    string path;
+    for (std::list<clientInfo *>::iterator client = info->mainFlow->clients->begin();
+         client != info->mainFlow->clients->end(); client++) {
+        bool move = info->center->moveOneStep(info->mainFlow->clock.getTime(),
+                                              (*client)->clientID);
+        if (move) {
+            //tcp->sendData("9", (*client)->clientSocket); //tell client to move.
+        } else {
+            //tcp->sendData("5"); //tell client to do nothing.
+        }
+        do {
+            path = info->center->serializePath(info->mainFlow->clock.getTime());
+            if (path.compare("NULL") != 0) {
+                //tell client to deserialize the given path.
+                //this->tcp->sendData("2", (*client)->clientSocket);
+                //this->tcp->sendData(path, (*client)->clientSocket);
+            }
+        } while (path.compare("NULL") != 0);
+
+        if (path.compare("NULL") == 0) {
+            //tcp->sendData("5", (*client)->clientSocket); //tell client to do nothing.
+        }
+    }
 }
