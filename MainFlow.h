@@ -25,6 +25,9 @@ public:
      */
     ~MainFlow();
 
+    /*TODO*/
+    int getTask();
+
 private:
     struct clientInfo{
         int clientSocket;

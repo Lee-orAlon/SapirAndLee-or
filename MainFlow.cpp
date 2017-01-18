@@ -4,11 +4,10 @@
 #include <boost/log/trivial.hpp>
 
 void* MainFlow::switchCase() {
-    int task;
     do {
-        cin >> task;
+        cin >> this->task;
         cin.ignore();
-        switch (task) {
+        switch (this->task) {
             case 1: {
                 BOOST_LOG_TRIVIAL(debug) << "case 1- add clients" << endl;
                 addThreadsAndClients();
@@ -38,6 +37,7 @@ void* MainFlow::switchCase() {
                 break;
             }
             case 9: {
+                this->clock.increaseTimeByOne();
                 //case9()
 
                 break;
@@ -184,7 +184,7 @@ void MainFlow::addThreadsAndClients() {
         this->tcp->sendData(dataTaxi, socket);
         int check = pthread_create(&thread, NULL, case9, (void*)info);
         if(!check){
-            pthread_join(thread, NULL);
+        //    pthread_join(thread, NULL);
         } else {
             /*TODO exit*/
         }
@@ -200,28 +200,40 @@ void *MainFlow::case9(void *information) {
     BOOST_LOG_TRIVIAL(debug) << "case 9" << endl;
     char buffer[4096];
     //this->tcp->reciveData(buffer, sizeof(buffer));
-    info->mainFlow->clock.increaseTimeByOne();
+    int lastTime = -1;
     string path;
-    for (std::list<clientInfo *>::iterator client = info->mainFlow->clients->begin();
-         client != info->mainFlow->clients->end(); client++) {
-        bool move = info->center->moveOneStep(info->mainFlow->clock.getTime(),
-                                              (*client)->clientID);
-        if (move) {
-            //tcp->sendData("9", (*client)->clientSocket); //tell client to move.
-        } else {
-            //tcp->sendData("5"); //tell client to do nothing.
-        }
-        do {
-            path = info->center->serializePath(info->mainFlow->clock.getTime());
-            if (path.compare("NULL") != 0) {
-                //tell client to deserialize the given path.
-                //this->tcp->sendData("2", (*client)->clientSocket);
-                //this->tcp->sendData(path, (*client)->clientSocket);
-            }
-        } while (path.compare("NULL") != 0);
+    while (info->mainFlow->getTask() != 7) {
+     //   for (std::list<clientInfo *>::iterator client = info->mainFlow->clients->begin();
+       //      client != info->mainFlow->clients->end(); client++) {
+        //    bool move = info->center->moveOneStep(info->mainFlow->clock.getTime(),
+          //                                        (*client)->clientID);
+            if(lastTime!=info->mainFlow->clock.getTime()) {
+                lastTime = info->mainFlow->clock.getTime();
+                bool move = info->center->moveOneStep(info->mainFlow->clock.getTime(),
+                                                      info->clientID);
+                if (move) {
+                    //tcp->sendData("9", (*client)->clientSocket); //tell client to move.
+                } else {
+                    //tcp->sendData("5"); //tell client to do nothing.
+                }
+                do {
+                    path = info->center->serializePath(info->mainFlow->clock.getTime());
+                    if (path.compare("NULL") != 0) {
+                        //tell client to deserialize the given path.
+                        //this->tcp->sendData("2", (*client)->clientSocket);
+                        //this->tcp->sendData(path, (*client)->clientSocket);
+                    }
+                } while (path.compare("NULL") != 0);
 
-        if (path.compare("NULL") == 0) {
-            //tcp->sendData("5", (*client)->clientSocket); //tell client to do nothing.
-        }
+                if (path.compare("NULL") == 0) {
+                    //tcp->sendData("5", (*client)->clientSocket); //tell client to do nothing.
+                }
+            }
+      //  }
     }
+}
+
+/*TODO*/
+int MainFlow::getTask() {
+    return this->task;
 }

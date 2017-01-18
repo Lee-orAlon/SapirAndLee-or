@@ -1,5 +1,3 @@
-
-/*TODO- delete 'how to use' comment before submitting*/
 /**
 * How to use :
 *	int clientDescriptor = this->socket->acceptOneClient();
@@ -24,9 +22,9 @@
 * port_num by the input												   *
 ***********************************************************************/
 Tcp::Tcp(bool isServers, int port_num) {
-    this->descriptorCommunicateClient = 0;
     this->port_number = port_num;
     this->isServer = isServers;
+
 }
 
 /***********************************************************************
@@ -42,74 +40,94 @@ Tcp::~Tcp() {
 /***********************************************************************
 * function name: initialize											   *
 * The Input: none              										   *
-* The output: int number representing the return status		           *
+* The output: 1 success or 0 failed error type will print              *
 * The Function operation: initialize the Socket object by getting	   *
 * socket descriptor. bind and accept for servers or connect for clients*
 ***********************************************************************/
 int Tcp::initialize() {
     //getting a socket descriptor and check if legal
-    this->socketDescriptor = socket(AF_INET, SOCK_STREAM, 0);
+    this->socketDescriptor = socket(AF_INET, SOCK_STREAM, 0); // (IPv4 , TCP, flags) --> Socket Descriptor
     if (this->socketDescriptor < 0) {
         //return an error represent error at this method
-        return ERROR_SOCKET;
+        perror("ERROR_SOCKET - in initialize()\n");
+        return 0;
     }
     //if server
     if (this->isServer) {
         //initialize the struct
-        struct sockaddr_in sin;
+        struct sockaddr_in sin;                     // ipv4 socket address structure
         memset(&sin, 0, sizeof(sin));
-        sin.sin_family = AF_INET;
-        sin.sin_addr.s_addr = INADDR_ANY;
-        sin.sin_port = htons(this->port_number);
+        sin.sin_family = AF_INET;                   // IPv4 version
+        sin.sin_addr.s_addr = INADDR_ANY;           // binds to all ip address of the host
+        sin.sin_port = htons(this->port_number);    // pass Server Post number
         //bind
-        if (::bind(this->socketDescriptor,
-                   (struct sockaddr *) &sin, sizeof(sin)) < 0) {
+        if (::bind(this->socketDescriptor,(struct sockaddr *) &sin, sizeof(sin)) < 0) {
             //return an error represent error at this method
-            return ERROR_BIND;
+            perror("ERROR_BIND - in initialize()\n");
+            return 0;
         }
         //listen
         if (listen(this->socketDescriptor, this->backLog) < 0) {
             //return an error represent error at this method
-            return ERROR_LISTEN;
+            perror("ERROR_LISTEN - in initialize()\n");
+            return 0;
         }
-        //accept
-        struct sockaddr_in client_sin;
-        unsigned int addr_len = sizeof(client_sin);
-        this->descriptorCommunicateClient = accept(this->socketDescriptor,
-                                                   (struct sockaddr *) &client_sin, &addr_len);
-        if (this->descriptorCommunicateClient < 0) {
-            //return an error represent error at this method
-            return ERROR_ACCEPT;
-        }
+        // start to accept first client (get 0 if failed)
+
         //if client
     } else {
         struct sockaddr_in sin;                                          // ipv4 socket address structure
         memset(&sin, 0, sizeof(sin));
         sin.sin_family = AF_INET;                                        // IPv4 version
-        sin.sin_addr.s_addr = inet_addr(
-                (this->ip_address).c_str());     // get IP address from DEFINE IP number
+        sin.sin_addr.s_addr = inet_addr((this->ip_address).c_str());     // get IP address from DEFINE IP number
         sin.sin_port = htons(this->port_number);                         // pass port number
         if (connect(this->socketDescriptor,
                     (struct sockaddr *) &sin, sizeof(sin)) < 0) {
             //return an error represent error at this method
             perror("ERROR_CONNECT - in initialize()\n");
             return 0;
-
-
-            struct sockaddr_in sin;
-            memset(&sin, 0, sizeof(sin));
-            sin.sin_family = AF_INET;
-            sin.sin_addr.s_addr = inet_addr((this->ip_address).c_str());
-            sin.sin_port = htons(this->port_number);
-            if (connect(this->socketDescriptor, (struct sockaddr *) &sin, sizeof(sin)) < 0) {
-                //return an error represent error at this method
-                return ERROR_CONNECT;
-            }
         }
-        //return correct if there were no problem
-        return CORRECT;
+        // success client initialize
+
     }
+    //return correct if there were no problem
+    return 1;
+
 }
+
+
+
+
+
+
+/***********************************************************************
+* function name: acceptOneClient									   *
+* The Input: None                                                      *
+* The output: int number representing the descriptorCommunicateClient  *
+*    if it server or no-negative integer in client case                *
+*    or -1 when failed.                                                *
+* The Function operation: getting data from the other socket to,	   *
+* enter it to the buffer and print the data							   *
+***********************************************************************/
+int Tcp::acceptOneClient(){
+   // if(this->isServer)
+    int clientDescriptor = 0;
+    struct sockaddr_in client_sin;
+    unsigned int addr_len = sizeof(client_sin);
+    clientDescriptor = accept(this->socketDescriptor,
+                              (struct sockaddr *) &client_sin, &addr_len);
+    if (clientDescriptor < 0) {
+        //return an error represent error at this method
+        perror("ERROR_CONNECT - in acceptOneClient()\n");
+        exit(1);
+    }
+    return  clientDescriptor;
+}
+
+
+
+
+
 
 /***********************************************************************
 * function name: sendData											   *
@@ -121,10 +139,8 @@ int Tcp::initialize() {
 ***********************************************************************/
 int Tcp::sendData(string data, int clientDescriptor) {
     size_t data_len = data.length();
-    const char *datas = data.c_str();
-    ssize_t sent_bytes = send(this->isServer ? clientDescriptor : this->socketDescriptor,
-                              datas,
-                              data_len, 0);
+    const char * datas = data.c_str();
+    ssize_t sent_bytes = send(this->isServer ? clientDescriptor : this->socketDescriptor, datas, data_len, 0);
     if (sent_bytes < 0) {
         string host = "";
         if (isServer) {
@@ -148,10 +164,8 @@ int Tcp::sendData(string data, int clientDescriptor) {
 * The Function operation: getting data from the other socket to,	   *
 * enter it to the buffer and print the data							   *
 ***********************************************************************/
-int Tcp::receiveData(char *buffer, int size, int clientDescriptor) {
-    ssize_t read_bytes = recv(this->isServer ? clientDescriptor : this->socketDescriptor,
-                              buffer,
-                              size, 0);
+int Tcp::receiveData(char* buffer, int size, int clientDescriptor) {
+    ssize_t read_bytes = recv(this->isServer ? clientDescriptor : this->socketDescriptor, buffer, size, 0);
     //checking the errors
     if (read_bytes <= 0) {
         string host = "";
@@ -173,28 +187,4 @@ int Tcp::receiveData(char *buffer, int size, int clientDescriptor) {
     }
     //return correct if there were no problem
     return read_bytes;
-}
-
-
-/***********************************************************************
-* function name: acceptOneClient									   *
-* The Input: None                                                      *
-* The output: int number representing the descriptorCommunicateClient  *
-*    if it server or no-negative integer in client case                *
-*    or -1 when failed.                                                *
-* The Function operation: getting data from the other socket to,	   *
-* enter it to the buffer and print the data							   *
-***********************************************************************/
-int Tcp::acceptOneClient() {
-    int clientDescriptor = 0;
-    struct sockaddr_in client_sin;
-    unsigned int addr_len = sizeof(client_sin);
-    clientDescriptor = accept(this->socketDescriptor,
-                              (struct sockaddr *) &client_sin, &addr_len);
-    if (clientDescriptor < 0) {
-        //return an error represent error at this method
-        perror("ERROR_CONNECT - in acceptOneClient()\n");
-        exit(1);
-    }
-    return clientDescriptor;
 }

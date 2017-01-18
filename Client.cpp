@@ -21,25 +21,25 @@ int main(int argc, char **argv) {
     if (argc == 3) {
         Driver *driver;
         Tcp *tcp = new Tcp(false, atoi(argv[2]));
-        if (tcp->initialize() != CORRECT) {
+        if (tcp->initialize() != 1) {
             perror("error creating socket");
         }
         driver = createDriver();
         string driverStr = serializeDriver(driver);
         //send the serialization of the driver to the server.
-        int descriptor = tcp->acceptOneClient();
-        tcp->sendData(driverStr, descriptor);
+//        int descriptor = tcp->acceptOneClient();
+        tcp->sendData(driverStr, 0);
         char buffer[4096];
         //receive the serialized cab from server.
-        tcp->receiveData(buffer, sizeof(buffer),descriptor);
+        tcp->receiveData(buffer, sizeof(buffer),0);
         //add the cab to driver.
         Cab *cab = driver->deserializeCab(buffer, buffer + 4095);
         driver->setCab(cab);
 
         bool socketOpen = true;
-        tcp->sendData("send me data", descriptor);
+        tcp->sendData("send me data", 0);
         while (socketOpen) {
-            tcp->receiveData(buffer, sizeof(buffer),descriptor);
+            tcp->receiveData(buffer, sizeof(buffer),0);
             int command = atoi(buffer);
             switch (command) {
                 case 0: {//if server sent "0" then communication end- close socket.
@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
                     if (driver->isInTrip()) {
                         driver->doNextMove();
                     }
-                    tcp->sendData(driver->serializeMyLocation(), descriptor);
+                    tcp->sendData(driver->serializeMyLocation(), 0);
                     break;
                 }
                 default: {
