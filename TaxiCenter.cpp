@@ -81,11 +81,14 @@ void TaxiCenter::createTrip(Trip *t) {
 }
 
 Trip *TaxiCenter::connectDriverToTrip(int currntTime) {
+    BOOST_LOG_TRIVIAL(debug) << "connect trips" <<this->trip->size()<< endl;
     std::list<Trip *>::iterator it = this->trip->begin();
 
     for (std::list<Trip *>::iterator it = this->trip->begin();
          it != this->trip->end(); it++) {
-        if (((*it)->getStartTime() == currntTime) && ((*it)->doesTripHasDriver() == false)) {
+        if (((*it)->getStartTime() >= currntTime) && ((*it)->doesTripHasDriver() == false)) {
+            if(currntTime==6)
+                BOOST_LOG_TRIVIAL(debug) << "trip" <<(*it)->getTariff()<< endl;
             Driver *d = this->findClosestDriver((*it)->getStart());
             if (d != NULL) {
                 /* TODO*/
@@ -133,6 +136,7 @@ std::list<Trip *> *TaxiCenter::listOfTrip() {
 
 Driver *TaxiCenter::findClosestDriver(Value *location) {
     if (this->drivers != NULL) {
+
         Driver *closest;
         double distance;
         double currentDistance;
@@ -142,6 +146,9 @@ Driver *TaxiCenter::findClosestDriver(Value *location) {
         for (std::list<Driver *>::iterator it = this->drivers->begin();
              it != this->drivers->end(); it++) {
             if (!(*it)->isInTrip()) {
+                //print here
+                if((*it)->getID()==0)
+                BOOST_LOG_TRIVIAL(debug) << "driver 0 not in trip"<<std::endl;
                 currentDistance = distanceOfDriverFromLocation(*it, location);
                 if (distance == -1) {
                     distance = distanceOfDriverFromLocation((*it), location);
