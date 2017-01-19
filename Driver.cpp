@@ -93,7 +93,8 @@ void Driver::move() {
         this->drive->setPassedMeters(numOfSteps);
         for (int i = 0; i < numOfSteps; i++) {
             if (isThereNextStep()) {
-                this->location = (*this->path->begin())->getMyLocation();
+                this->location = new Point((*this->path->begin())->getMyLocation()->getiValue(1),
+                                           (*this->path->begin())->getMyLocation()->getiValue(2));
                 this->path->remove(*this->path->begin());
             } else {
                 delete (this->path);

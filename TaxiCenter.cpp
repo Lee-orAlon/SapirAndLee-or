@@ -1,5 +1,5 @@
 #include "TaxiCenter.h"
-
+#include <boost/log/trivial.hpp>
 using namespace std;
 
 TaxiCenter::TaxiCenter(Grid *grid, BFS *bfs) {
@@ -14,6 +14,35 @@ TaxiCenter::TaxiCenter() {
 }
 
 TaxiCenter::~TaxiCenter() {
+  /* BOOST_LOG_TRIVIAL(debug) << "delete driver" <<endl;
+    Driver *driver;
+    std::list<Driver *>::iterator it = this->drivers->begin();
+    while(this->drivers->size()>0){
+        this->drivers->remove((*it));
+        delete (*it);
+        it++;
+    }
+    BOOST_LOG_TRIVIAL(debug) << "delete taxi" <<endl;
+    std::list<Cab *>::iterator itCab = this->cabs->begin();
+    while(this->cabs->size()>0){
+        this->cabs->remove((*itCab));
+        delete (*itCab);
+        itCab++;
+        BOOST_LOG_TRIVIAL(debug) << "delete taxi" <<endl;
+    }
+    BOOST_LOG_TRIVIAL(debug) << "delete trip" <<endl;
+    std::list<Trip *>::iterator itTrip = this->trip->begin();
+    while(this->trip->size()>0){
+        this->trip->remove((*itTrip));
+        delete (*itTrip);
+        itTrip++;
+    }
+    delete this->drivers;
+    delete (this->cabs);
+    delete (this->trip);
+    delete (this->grid);
+    delete this->bfs;
+    BOOST_LOG_TRIVIAL(debug) << "delete taxi center" <<endl;*/
     Driver *driver;
     for (std::list<Driver *>::iterator it = this->drivers->begin();
          it != this->drivers->end(); it++) {
@@ -152,6 +181,7 @@ void TaxiCenter::deleteTripFromList(Trip *t) {
         this->trip->remove(t);
         delete t;
     }
+    BOOST_LOG_TRIVIAL(debug) << "number of trips afer delete"<<this->trip->size()<<std::endl;
 }
 
 bool TaxiCenter::moveOneStep(int currentTime, int ID) {

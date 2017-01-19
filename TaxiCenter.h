@@ -34,7 +34,7 @@ private:
     std::list<Driver *> *drivers;
     std::list<Cab *> *cabs;
     std::list<Trip *> *trip;
-    Grid *grid;
+
     BFS *bfs;
     /*TODO*/
     pthread_mutex_t connection_locker;
@@ -50,6 +50,8 @@ private:
     }
 
 public:
+    /*change*/
+    Grid *grid;
     /**
      * constructor.
      * @param grid the Map of the world which the taxi center lives in.

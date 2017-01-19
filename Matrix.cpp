@@ -1,5 +1,5 @@
 #include "Matrix.h"
-
+#include <boost/log/trivial.hpp>
 Matrix::Matrix(int x, int y) {
     this->xSize = x;
     this->ySize = y;
@@ -26,6 +26,7 @@ Matrix::Matrix(int x, int y) {
             }
         }
     }
+
 }
 
 bool Matrix::compareVectors(Value *p1, Value *p2) {
@@ -62,13 +63,16 @@ void Matrix::setFatherDir(int dir, Value *p) {
 }
 
 Matrix::~Matrix() {
+    BOOST_LOG_TRIVIAL(debug) << "delete matrix"<<std::endl;
     for (int i = 0; i < this->xSize; i++) {
         for (int j = 0; j < this->ySize; j++) {
+           // BOOST_LOG_TRIVIAL(debug) << "delet "<<std::endl;
+           // this->matrix[i][j]->getMyLocation()->printValue();
             delete (this->matrix[i][j]);
         }
-        delete[](this->matrix[i]);
+       delete[](this->matrix[i]);
     }
-    delete this->matrix;
+   delete this->matrix;
 }
 
 Value *Matrix::getValue(int x, int y) {
@@ -86,3 +90,25 @@ void Matrix::resetVisitedSquares() {
         }
     }
 }
+/*
+ *
+ *
+3 3
+0
+3
+0,1,H,R
+3
+1,2,H,R
+2
+0,0,0,2,2,1,20,1
+2
+1,0,0,1,1,1,20,1
+1
+
+ */
+
+/*
+ *
+ * d
+1,40,S,5,1
+ */

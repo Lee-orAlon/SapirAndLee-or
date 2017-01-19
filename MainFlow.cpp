@@ -16,7 +16,7 @@ void* MainFlow::switchCase() {
             case 2: {
                 BOOST_LOG_TRIVIAL(debug) << "case 2- add trip" << endl;
                 this->taxiCenter->createTrip(createTrip());
-                /*if(this->isThereConnection){
+                /*if(this->isThefreConnection){
                     tcp->sendData("5");
                 }*/
                 break;
@@ -36,6 +36,9 @@ void* MainFlow::switchCase() {
                  */
                 break;
             }
+            //case 8:{
+              //  this->taxiCenter->grid->~Grid();
+            //}
             case 9: {
                 this->clock.increaseTimeByOne();
                 //case9()
@@ -158,6 +161,17 @@ void MainFlow::printDriverLocation() {
 }
 
 MainFlow::~MainFlow() {
+    clientInfo *info;
+    std::list<clientInfo *>::iterator it = this->clients->begin();
+    while(this->clients->size()>0){
+        (*it)->mainFlow=NULL;
+        (*it)->center=NULL;
+        this->clients->remove((*it));
+        BOOST_LOG_TRIVIAL(debug) << "number of thread after deleteing" <<
+                                                                       this->clients->size()<<endl;
+        it++;
+    }
+    delete(this->clients);
     delete (this->taxiCenter);
     delete (this->map);
 }
@@ -237,3 +251,42 @@ void *MainFlow::case9(void *information) {
 int MainFlow::getTask() {
     return this->task;
 }
+
+/*
+ *
+ *
+0,30,M,1,0
+2
+ */
+
+/*
+800 800
+0
+3
+0,1,H,R
+2
+0,0,0,700,700,1,20,1
+1
+1
+
+ 800 800
+0
+3
+0,1,H,R
+2
+0,0,0,700,700,1,20,1
+1
+1
+ */
+/*
+ 10 10
+0
+3
+0,1,H,R
+2
+0,0,0,9,9,1,20,1
+3
+1,2,H.R
+2
+1,0,0,2,2,2,20,3
+ */
