@@ -66,8 +66,6 @@ Matrix::~Matrix() {
     BOOST_LOG_TRIVIAL(debug) << "delete matrix"<<std::endl;
     for (int i = 0; i < this->xSize; i++) {
         for (int j = 0; j < this->ySize; j++) {
-           // BOOST_LOG_TRIVIAL(debug) << "delet "<<std::endl;
-           // this->matrix[i][j]->getMyLocation()->printValue();
             delete (this->matrix[i][j]);
         }
        delete[](this->matrix[i]);

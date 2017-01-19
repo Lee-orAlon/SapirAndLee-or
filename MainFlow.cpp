@@ -179,23 +179,29 @@ MainFlow::~MainFlow() {
 
 void MainFlow::addThreadsAndClients() {
     int numOfDrivers;
+    //number of drivers
     cin >> numOfDrivers;
     this->tcp->initialize();
     char buffer[4096];
+    /*
+     * create trade to all driver
+     */
     for (int i = 0; i < numOfDrivers; i++) {
         pthread_t thread;
         int socket = this->tcp->acceptOneClient();
         this->tcp->receiveData(buffer, sizeof(buffer), socket);
         int ID = this->taxiCenter->getIDFromSerialization(buffer,buffer + 4095);
+        //initialize one struct to the customer
         clientInfo *info = new clientInfo;
         info->clientSocket = socket;
         info->clientID = ID;
         info->mainFlow = this;
         info->center = this->taxiCenter;
-        //this->clients->push_back(info);
+        //recive string of cab
         string dataTaxi = this->taxiCenter->connectDriverToTaxi(buffer, buffer + 4095);
         // send serialized cab to the driver.
         this->tcp->sendData(dataTaxi, socket);
+        //create thread
         int check = pthread_create(&thread, NULL, case9, (void*)info);
         if(!check){
         //    pthread_join(thread, NULL);
@@ -210,22 +216,37 @@ void MainFlow::addThreadsAndClients() {
 
 /*TODO*/
 void *MainFlow::case9(void *information) {
+    //recive information from the threade
     clientInfo *info = (clientInfo*)information;
+    //print it that we arrive to one thread
     BOOST_LOG_TRIVIAL(debug) << "case 9" << endl;
     char buffer[4096];
     //this->tcp->reciveData(buffer, sizeof(buffer));
     int lastTime = -1;
     string path;
+    /*
+     * while the customer not ener 7 ,the thread alive and perform things according to the
+     * times
+     */
     while (info->mainFlow->getTask() != 7) {
+        //need to delete?
      //   for (std::list<clientInfo *>::iterator client = info->mainFlow->clients->begin();
        //      client != info->mainFlow->clients->end(); client++) {
         //    bool move = info->center->moveOneStep(info->mainFlow->clock.getTime(),
           //                                        (*client)->clientID);
+
+        //check if the time change
             if(lastTime!=info->mainFlow->clock.getTime()) {
+                //if time change update the time
                 lastTime = info->mainFlow->clock.getTime();
-                //BOOST_LOG_TRIVIAL(debug) << "time is: " << info->mainFlow->clock.getTime() << endl;
+                //print the current time
+                BOOST_LOG_TRIVIAL(debug) << "time is: " << info->mainFlow->clock.getTime() << endl;
+                //move the driver
                 bool move = info->center->moveOneStep(info->mainFlow->clock.getTime(),
                                                       info->clientID);
+                /*
+                 * Need to complete
+                 */
                 if (move) {
                     //tcp->sendData("9", (*client)->clientSocket); //tell client to move.
                     /*string currentLoc = info->center->getCurrentLocationAndSerializeIt(info->clientID);
@@ -237,6 +258,11 @@ void *MainFlow::case9(void *information) {
                 } else {
                     //tcp->sendData("5"); //tell client to do nothing.
                 }
+                /*
+                 * connect trips to driver,all the time cheak if there trips wuthout driver
+                 * if  there is that trips'we ant the current time big or equal to the time of trip
+                 * so explore driver
+                 */
                 do {
                     path = info->center->serializePath(info->mainFlow->clock.getTime());
                     if (path.compare("NULL") != 0) {
@@ -255,69 +281,9 @@ void *MainFlow::case9(void *information) {
    // info->mainFlow->tcp->sendData("0", info->clientSocket);
 }
 
-/*TODO*/
+/*
+ * get the number of current task
+ */
 int MainFlow::getTask() {
     return this->task;
 }
-
-/*
- *
- *
-0,30,M,1,0
-2
- */
-
-/*
-800 800
-0
-3
-0,1,H,R
-2
-0,0,0,700,700,1,20,1
-1
-1
-
- 800 800
-0
-3
-0,1,H,R
-2
-0,0,0,700,700,1,20,1
-1
-1
- */
-/*
- 10 10
-0
-3
-0,1,H,R
-2
-0,0,0,9,9,1,20,1
-3
-1,2,H.R
-2
-1,0,0,2,2,2,20,3
- */
-
-/*
- 1000 1000
-2
-1,1
-0,1
-3
-0,1,H,R
-3
-1,1,H,R
-3
-2,1,H,R
-2
-0,0,0,2,2,1,20,2
-2
-1,0,0,567,100,2,30,3
-2
-2,0,0,888,777,3,30,3
-2
-3,2,2,888,50,4,30,7
-1
-3
- */

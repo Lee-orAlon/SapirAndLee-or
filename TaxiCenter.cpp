@@ -14,35 +14,6 @@ TaxiCenter::TaxiCenter() {
 }
 
 TaxiCenter::~TaxiCenter() {
-  /* BOOST_LOG_TRIVIAL(debug) << "delete driver" <<endl;
-    Driver *driver;
-    std::list<Driver *>::iterator it = this->drivers->begin();
-    while(this->drivers->size()>0){
-        this->drivers->remove((*it));
-        delete (*it);
-        it++;
-    }
-    BOOST_LOG_TRIVIAL(debug) << "delete taxi" <<endl;
-    std::list<Cab *>::iterator itCab = this->cabs->begin();
-    while(this->cabs->size()>0){
-        this->cabs->remove((*itCab));
-        delete (*itCab);
-        itCab++;
-        BOOST_LOG_TRIVIAL(debug) << "delete taxi" <<endl;
-    }
-    BOOST_LOG_TRIVIAL(debug) << "delete trip" <<endl;
-    std::list<Trip *>::iterator itTrip = this->trip->begin();
-    while(this->trip->size()>0){
-        this->trip->remove((*itTrip));
-        delete (*itTrip);
-        itTrip++;
-    }
-    delete this->drivers;
-    delete (this->cabs);
-    delete (this->trip);
-    delete (this->grid);
-    delete this->bfs;
-    BOOST_LOG_TRIVIAL(debug) << "delete taxi center" <<endl;*/
     Driver *driver;
     for (std::list<Driver *>::iterator it = this->drivers->begin();
          it != this->drivers->end(); it++) {
@@ -75,7 +46,6 @@ std::list<Driver *> *TaxiCenter::listOfDriver() {
     return this->drivers;
 }
 
-
 void TaxiCenter::createTrip(Trip *t) {
     this->trip->push_back(t);
 }
@@ -86,7 +56,7 @@ Trip *TaxiCenter::connectDriverToTrip(int currntTime) {
 
     for (std::list<Trip *>::iterator it = this->trip->begin();
          it != this->trip->end(); it++) {
-        if (((*it)->getStartTime() >= currntTime) && ((*it)->doesTripHasDriver() == false)) {
+        if (((*it)->getStartTime()<= currntTime) && ((*it)->doesTripHasDriver() == false)) {
             if(currntTime==6)
                 BOOST_LOG_TRIVIAL(debug) << "trip" <<(*it)->getTariff()<< endl;
             Driver *d = this->findClosestDriver((*it)->getStart());
@@ -142,13 +112,9 @@ Driver *TaxiCenter::findClosestDriver(Value *location) {
         double currentDistance;
         distance = -1;
         std::list<Driver *>::iterator it = this->drivers->begin();
-
         for (std::list<Driver *>::iterator it = this->drivers->begin();
              it != this->drivers->end(); it++) {
             if (!(*it)->isInTrip()) {
-                //print here
-                if((*it)->getID()==0)
-                BOOST_LOG_TRIVIAL(debug) << "driver 0 not in trip"<<std::endl;
                 currentDistance = distanceOfDriverFromLocation(*it, location);
                 if (distance == -1) {
                     distance = distanceOfDriverFromLocation((*it), location);
@@ -177,7 +143,7 @@ std::list<Element *> *TaxiCenter::createPath(Value *start, Value *end) {
 }
 
 void TaxiCenter::deleteTripFromList(Trip *t) {
-   // BOOST_LOG_TRIVIAL(debug) << "number of trips before delete"<<this->trip->size()<<std::endl;
+   BOOST_LOG_TRIVIAL(debug) << "number of trips before delete"<<this->trip->size()<<std::endl;
     pthread_mutex_lock(&this->connection_locker);
     bool ifFind = false;
     for (std::list<Trip *>::iterator it = this->trip->begin(); it != this->trip->end(); it++) {
@@ -191,7 +157,7 @@ void TaxiCenter::deleteTripFromList(Trip *t) {
         delete t;
     }
     pthread_mutex_unlock(&this->connection_locker);
-   // BOOST_LOG_TRIVIAL(debug) << "number of trips afer delete"<<this->trip->size()<<std::endl;
+    BOOST_LOG_TRIVIAL(debug) << "number of trips afer delete"<<this->trip->size()<<std::endl;
 }
 
 bool TaxiCenter::moveOneStep(int currentTime, int ID) {
@@ -203,11 +169,10 @@ bool TaxiCenter::moveOneStep(int currentTime, int ID) {
                 (*it)->move();
                 someoneMoved = true;
                 if (!(*it)->isInTrip()) {
-                 //   BOOST_LOG_TRIVIAL(debug) << "need delete"<< (*it)->getID()<<std::endl;
-                    //BOOST_LOG_TRIVIAL(debug) << "before delete trip"<<this->trip->size()<<std::endl;
+                    BOOST_LOG_TRIVIAL(debug) << "before delete trip"<<this->trip->size()<<std::endl;
                     //  setRateOfDriver((*it), (*it)->getCurrentTrip().listPassenger());
                     this->deleteTripFromList((*it)->getCurrentTrip());
-                    //BOOST_LOG_TRIVIAL(debug) << "after delete trip"<<this->trip->size()<<std::endl;
+                    BOOST_LOG_TRIVIAL(debug) << "after delete trip"<<this->trip->size()<<std::endl;
                 }
             }
         }
@@ -310,7 +275,6 @@ int TaxiCenter::getIDFromSerialization(char *driver, char *end) {
     return d->getID();
 }
 
-/*TODO*/
 string TaxiCenter::getCurrentLocationAndSerializeIt(int ID) {
     std::list<Driver *>::iterator it = this->drivers->begin();
     for (std::list<Driver *>::iterator it = this->drivers->begin();

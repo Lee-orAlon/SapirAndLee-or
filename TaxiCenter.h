@@ -192,10 +192,15 @@ public:
      */
     string serializePath(int currentTime);
 
-    /*TODO*/
+    /*
+     * input: serilization of driver
+     * output: id of driver
+     */
     int getIDFromSerialization(char *driver, char *end);
 
-    /*TODO*/
+    /*
+     * serilizate location of driver that in list of driver
+     */
     string getCurrentLocationAndSerializeIt(int ID);
 };
 

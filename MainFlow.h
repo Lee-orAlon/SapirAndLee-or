@@ -28,6 +28,9 @@ public:
     int getTask();
 
 private:
+    /*
+     * struct that all tread is contin this data
+     */
     struct clientInfo{
         int clientSocket;
         int clientID;
@@ -69,13 +72,19 @@ private:
     void printDriverLocation();
 
 
-    /*TODO*/
+    /**
+     * addThreadsAndClients- create traad to all client.
+     */
     void addThreadsAndClients();
 
-    /*TODO*/
+    /**
+     * case9- static function that thread run of it function
+     */
     static void *case9(void *information);
 
-    /*TODO*/
+    /**
+      * switchCase- perform the task acoording to the customer input.
+      */
     void* switchCase();
 };
 
