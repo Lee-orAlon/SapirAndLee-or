@@ -187,7 +187,9 @@ void Driver::doNextMove() {
         numOfSteps = this->taxi->move();
         for (int i = 0; i < numOfSteps; i++) {
             if (isThereNextStep()) {
-                this->location = (*this->path->begin())->getMyLocation();
+                delete this->location;
+                this->location = new Point((*this->path->begin())->getMyLocation()->getiValue(1),
+                                           (*this->path->begin())->getMyLocation()->getiValue(2));
                 this->path->remove(*this->path->begin());
             } else {
                 delete (this->path);

@@ -140,7 +140,7 @@ int Tcp::acceptOneClient(){
 int Tcp::sendData(string data, int clientDescriptor) {
     size_t data_len = data.length();
     const char * datas = data.c_str();
-    ssize_t sent_bytes = send(this->isServer ? clientDescriptor : this->socketDescriptor, datas, data_len, 0);
+        ssize_t sent_bytes = send(this->isServer ? clientDescriptor : this->socketDescriptor, datas, data_len, 0);
     if (sent_bytes < 0) {
         string host = "";
         if (isServer) {

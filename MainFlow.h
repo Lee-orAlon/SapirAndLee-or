@@ -40,7 +40,7 @@ private:
     Clock clock;
     TaxiCenter *taxiCenter;
     Map *map;
-    std::list<clientInfo *> *clients;
+    //std::list<clientInfo *> *clients;
 
     /**
      * createMap.

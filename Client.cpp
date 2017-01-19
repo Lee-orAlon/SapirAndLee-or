@@ -4,6 +4,8 @@
 
 using namespace std;
 
+Value* deserializeLocation(char * loc, char* end);
+
 /**
  * createDriver- create new driver according to the user's input.
  */
@@ -40,8 +42,13 @@ int main(int argc, char **argv) {
         tcp->sendData("send me data", 0);
         while (socketOpen) {
             tcp->receiveData(buffer, sizeof(buffer),0);
-            int command = atoi(buffer);
-            switch (command) {
+            if(atoi(buffer) == 0) {
+                socketOpen = false;
+            } else {
+                driver->setLocation(deserializeLocation(buffer, buffer+4095));
+            }
+           // int command = atoi(buffer);
+            /*switch (command) {
                 case 0: {//if server sent "0" then communication end- close socket.
                     socketOpen = false;
                     break;
@@ -62,7 +69,7 @@ int main(int argc, char **argv) {
                 default: {
                     //tcp->sendData("send me data", descriptor);
                 }
-            }
+            }*/
         }
         delete (cab);
         delete (driver);
@@ -99,5 +106,16 @@ string serializeDriver(Driver *d) {
     oa << d;
     s.flush();
     return serial_str;
+}
+
+
+Value* deserializeLocation(char * loc,char* end){
+    Value * location;
+    boost::iostreams::basic_array_source<char> device(loc,end);
+    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device);
+    boost::archive::binary_iarchive ia(s2);
+    ia >> location;
+
+    return location;
 }
 

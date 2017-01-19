@@ -194,6 +194,9 @@ public:
 
     /*TODO*/
     int getIDFromSerialization(char *driver, char *end);
+
+    /*TODO*/
+    string getCurrentLocationAndSerializeIt(int ID);
 };
 
 #endif //EX2_TEXICENTER_H

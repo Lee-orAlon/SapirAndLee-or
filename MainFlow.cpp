@@ -58,7 +58,7 @@ MainFlow::MainFlow(int port) {
     this->clock = Clock();
     this->tcp = new Tcp(true, port);
     this->isThereConnection = false;
-    this->clients = new std::list<clientInfo *>;
+    //this->clients = new std::list<clientInfo *>;
 
     this->switchCase();
 
@@ -162,8 +162,8 @@ void MainFlow::printDriverLocation() {
 
 MainFlow::~MainFlow() {
     clientInfo *info;
-    std::list<clientInfo *>::iterator it = this->clients->begin();
-    while(this->clients->size()>0){
+    //std::list<clientInfo *>::iterator it = this->clients->begin();
+   /* while(this->clients->size()>0){
         (*it)->mainFlow=NULL;
         (*it)->center=NULL;
         this->clients->remove((*it));
@@ -171,7 +171,7 @@ MainFlow::~MainFlow() {
                                                                        this->clients->size()<<endl;
         it++;
     }
-    delete(this->clients);
+    delete(this->clients);*/
     delete (this->taxiCenter);
     delete (this->map);
 }
@@ -192,7 +192,7 @@ void MainFlow::addThreadsAndClients() {
         info->clientID = ID;
         info->mainFlow = this;
         info->center = this->taxiCenter;
-        this->clients->push_back(info);
+        //this->clients->push_back(info);
         string dataTaxi = this->taxiCenter->connectDriverToTaxi(buffer, buffer + 4095);
         // send serialized cab to the driver.
         this->tcp->sendData(dataTaxi, socket);
@@ -223,10 +223,17 @@ void *MainFlow::case9(void *information) {
           //                                        (*client)->clientID);
             if(lastTime!=info->mainFlow->clock.getTime()) {
                 lastTime = info->mainFlow->clock.getTime();
+                //BOOST_LOG_TRIVIAL(debug) << "time is: " << info->mainFlow->clock.getTime() << endl;
                 bool move = info->center->moveOneStep(info->mainFlow->clock.getTime(),
                                                       info->clientID);
                 if (move) {
                     //tcp->sendData("9", (*client)->clientSocket); //tell client to move.
+                    /*string currentLoc = info->center->getCurrentLocationAndSerializeIt(info->clientID);
+                    BOOST_LOG_TRIVIAL(debug) << "send: " << currentLoc << endl;
+                    if(currentLoc.compare("NULL") != 0) {
+                        int byt = info->mainFlow->tcp->sendData(currentLoc, info->clientSocket);
+                        BOOST_LOG_TRIVIAL(debug) << "sent: " << byt << endl;*/
+                   // }
                 } else {
                     //tcp->sendData("5"); //tell client to do nothing.
                 }
@@ -245,6 +252,7 @@ void *MainFlow::case9(void *information) {
             }
       //  }
     }
+   // info->mainFlow->tcp->sendData("0", info->clientSocket);
 }
 
 /*TODO*/

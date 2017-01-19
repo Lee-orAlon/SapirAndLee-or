@@ -170,6 +170,8 @@ std::list<Element *> *TaxiCenter::createPath(Value *start, Value *end) {
 }
 
 void TaxiCenter::deleteTripFromList(Trip *t) {
+   // BOOST_LOG_TRIVIAL(debug) << "number of trips before delete"<<this->trip->size()<<std::endl;
+    pthread_mutex_lock(&this->connection_locker);
     bool ifFind = false;
     for (std::list<Trip *>::iterator it = this->trip->begin(); it != this->trip->end(); it++) {
         if ((*it) == t) {
@@ -181,7 +183,8 @@ void TaxiCenter::deleteTripFromList(Trip *t) {
         this->trip->remove(t);
         delete t;
     }
-    BOOST_LOG_TRIVIAL(debug) << "number of trips afer delete"<<this->trip->size()<<std::endl;
+    pthread_mutex_unlock(&this->connection_locker);
+   // BOOST_LOG_TRIVIAL(debug) << "number of trips afer delete"<<this->trip->size()<<std::endl;
 }
 
 bool TaxiCenter::moveOneStep(int currentTime, int ID) {
@@ -193,8 +196,11 @@ bool TaxiCenter::moveOneStep(int currentTime, int ID) {
                 (*it)->move();
                 someoneMoved = true;
                 if (!(*it)->isInTrip()) {
+                 //   BOOST_LOG_TRIVIAL(debug) << "need delete"<< (*it)->getID()<<std::endl;
+                    //BOOST_LOG_TRIVIAL(debug) << "before delete trip"<<this->trip->size()<<std::endl;
                     //  setRateOfDriver((*it), (*it)->getCurrentTrip().listPassenger());
                     this->deleteTripFromList((*it)->getCurrentTrip());
+                    //BOOST_LOG_TRIVIAL(debug) << "after delete trip"<<this->trip->size()<<std::endl;
                 }
             }
         }
@@ -295,4 +301,26 @@ int TaxiCenter::getIDFromSerialization(char *driver, char *end) {
     ia >> d;
 
     return d->getID();
+}
+
+/*TODO*/
+string TaxiCenter::getCurrentLocationAndSerializeIt(int ID) {
+    std::list<Driver *>::iterator it = this->drivers->begin();
+    for (std::list<Driver *>::iterator it = this->drivers->begin();
+         it != this->drivers->end(); it++) {
+        if ((*it)->getID() == ID) {
+            Value* loc = (*it)->getLocation();
+            BOOST_LOG_TRIVIAL(debug) << "loc: " << loc->getiValue(1) << " , " << loc->getiValue(2) << endl;
+            std::string serial_str;
+            boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+            boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(
+                    inserter);
+            boost::archive::binary_oarchive oa(s);
+            oa <<(loc);
+            s.flush();
+            return serial_str;
+        }
+    }
+
+    return "NULL";
 }
